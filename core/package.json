@@ -1,0 +1,69 @@
+{
+  "name": "@scalix/core",
+  "version": "0.1.0",
+  "description": "Scalix CLAW agent orchestration engine",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.cjs"
+    },
+    "./agent": {
+      "types": "./dist/agent/index.d.ts",
+      "import": "./dist/agent/index.mjs",
+      "require": "./dist/agent/index.cjs"
+    },
+    "./orchestration": {
+      "types": "./dist/orchestration/index.d.ts",
+      "import": "./dist/orchestration/index.mjs",
+      "require": "./dist/orchestration/index.cjs"
+    },
+    "./tools": {
+      "types": "./dist/tools/index.d.ts",
+      "import": "./dist/tools/index.mjs",
+      "require": "./dist/tools/index.cjs"
+    },
+    "./observability": {
+      "types": "./dist/observability/index.d.ts",
+      "import": "./dist/observability/index.mjs",
+      "require": "./dist/observability/index.cjs"
+    },
+    "./storage": {
+      "types": "./dist/storage/index.d.ts",
+      "import": "./dist/storage/index.mjs",
+      "require": "./dist/storage/index.cjs"
+    },
+    "./plugins": {
+      "types": "./dist/plugins/index.d.ts",
+      "import": "./dist/plugins/index.mjs",
+      "require": "./dist/plugins/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc && node scripts/build.js",
+    "test": "vitest",
+    "test:coverage": "vitest --coverage",
+    "clean": "rm -rf dist node_modules .turbo"
+  },
+  "dependencies": {
+    "zod": "^3.22.4",
+    "uuid": "^9.0.1",
+    "winston": "^3.11.0",
+    "pino": "^8.17.2",
+    "pino-pretty": "^10.3.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/uuid": "^9.0.7",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.4"
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "name": "@scalix/sdk",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for Scalix CLAW",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": "./dist/index.mjs"
+  },
+  "files": [
+    "dist",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "vitest",
+    "dev": "tsc --watch"
+  },
+  "dependencies": {
+    "@scalix/core": "workspace:*",
+    "zod": "^3.22.4"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3"
+  }
+}

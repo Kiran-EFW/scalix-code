@@ -1,0 +1,64 @@
+{
+  "name": "scalix-claw",
+  "version": "0.1.0",
+  "description": "Production-ready agent orchestration platform",
+  "license": "MIT",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=20.0.0",
+    "pnpm": ">=8.0.0"
+  },
+  "scripts": {
+    "dev": "pnpm --recursive run dev",
+    "build": "pnpm --recursive run build",
+    "test": "pnpm --recursive run test",
+    "test:coverage": "pnpm --recursive run test:coverage",
+    "lint": "eslint . --ext .ts,.tsx",
+    "format": "prettier --write '**/*.{ts,tsx,json,md}'",
+    "type-check": "tsc --noEmit",
+    "clean": "pnpm --recursive run clean && rm -rf node_modules",
+    "setup": "pnpm install && pnpm run build",
+    "docs": "cd docs && npm run build",
+    "docker:build": "docker-compose build",
+    "docker:up": "docker-compose up -d",
+    "docker:down": "docker-compose down",
+    "release": "changeset publish"
+  },
+  "workspaces": [
+    "core",
+    "packages/*",
+    "plugins/*",
+    "frontends/*",
+    "examples/*"
+  ],
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "eslint": "^8.54.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.4",
+    "@vitest/coverage-v8": "^1.0.4",
+    "@changesets/cli": "^2.27.1"
+  },
+  "keywords": [
+    "agent",
+    "orchestration",
+    "multi-agent",
+    "workflow",
+    "automation",
+    "ai",
+    "llm",
+    "production"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scalix/claw"
+  },
+  "bugs": {
+    "url": "https://github.com/scalix/claw/issues"
+  },
+  "homepage": "https://claw.scalix.dev"
+}
