@@ -9,3 +9,8 @@ export * from './types';
 export * from './tracer';
 export * from './metrics';
 export * from './logger';
+
+// Re-export implementations
+export { DefaultTracer, NoOpTracer } from './tracer';
+export { DefaultLogger, NoOpLogger } from './logger';
+export { DefaultMetricsCollector, NoOpMetricsCollector } from './metrics';

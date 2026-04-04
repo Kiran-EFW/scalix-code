@@ -26,6 +26,9 @@ export * from './plugins/index';
 // API module exports
 export * from './api/index';
 
+// Platform exports
+export * from './platform';
+
 // Re-export common types
 export type { Agent, ExecutionResult, ToolCall, Cost } from './agent/types';
 export type { Workflow, WorkflowStep, CoordinationPattern } from './orchestration/types';

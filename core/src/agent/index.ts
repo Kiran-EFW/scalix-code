@@ -9,3 +9,4 @@ export * from './types';
 export * from './agent';
 export * from './executor';
 export * from './state-machine';
+export * from './llm-provider';

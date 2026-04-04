@@ -7,4 +7,6 @@
 
 export * from './types';
 export * from './loader';
-export * from './registry';
+
+// Re-export implementations
+export { PluginLoader, createPlugin } from './loader';

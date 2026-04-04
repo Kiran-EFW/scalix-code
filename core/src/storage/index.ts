@@ -7,5 +7,6 @@
 
 export * from './types';
 export * from './storage';
-export * from './memory';
-export * from './checkpoint';
+
+// Re-export implementations
+export { InMemoryStorage, NoOpStorage } from './storage';
