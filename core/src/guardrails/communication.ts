@@ -121,7 +121,7 @@ export class CommunicationManager {
   private recommendations: Recommendation[] = [];
   private pendingConfirmations: Map<string, UserInteraction> = new Map();
   private interactionHistory: UserInteraction[] = [];
-  private _maxHistorySize = 500;
+  private maxHistorySize = 500;
 
   /**
    * Ask a clarifying question
@@ -380,8 +380,9 @@ export class CommunicationManager {
   /**
    * Get interaction history
    */
-  getHistory(limit: number = 100): UserInteraction[] {
-    return this.interactionHistory.slice(-limit);
+  getHistory(limit?: number): UserInteraction[] {
+    const actualLimit = limit ?? this.maxHistorySize;
+    return this.interactionHistory.slice(-actualLimit);
   }
 
   /**

@@ -149,7 +149,7 @@ export class AgentExecutor implements Agent {
    */
   private async executeInternal(
     input: string,
-    context?: Record<string, unknown>,
+    _context?: Record<string, unknown>,
     traceId?: string
   ): Promise<ExecutionResult> {
     const actualTraceId = traceId || uuid();
@@ -322,7 +322,6 @@ export class AgentExecutor implements Agent {
           this.stateMachine.transition('waiting' as any);
           this.tracer.endSpan(iterationSpan, 'success');
         } catch (error) {
-          const message = error instanceof Error ? error.message : 'Unknown error';
           this.logger.error?.(`Iteration ${iteration} failed`, error as Error);
           this.tracer.endSpan(iterationSpan, 'error');
 

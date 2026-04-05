@@ -405,7 +405,7 @@ export class ScalixConversationEngine implements ConversationEngine {
     };
   }
 
-  private async updateConversationContext(state: ConversationState): Promise<void> {
+  private async updateConversationContext(_state: ConversationState): Promise<void> {
     // TODO: Update git status, recent files, etc.
   }
 

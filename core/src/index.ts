@@ -33,9 +33,9 @@ export * from './performance/index';
 export * from './platform';
 
 // Re-export common types
-export type { Agent, ExecutionResult, ToolCall, Cost } from './agent/types';
+export type { Agent, ExecutionResult, Cost } from './agent/types';
 export type { Workflow, WorkflowStep, CoordinationPattern } from './orchestration/types';
-export type { Tool, ToolRegistry, ToolCall as ToolCallType } from './tools/types';
+export type { Tool, ToolRegistry, ToolCall } from './tools/types';
 export type { TraceSpan, Metric, Logger } from './observability/types';
 export type { Storage, AgentMemory } from './storage/types';
 export type { Plugin, PluginConfig } from './plugins/types';
