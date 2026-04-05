@@ -1,0 +1,42 @@
+{
+  "name": "@scalix/testing",
+  "version": "0.1.0",
+  "description": "Testing utilities and fixtures for Scalix CLAW",
+  "license": "MIT",
+  "type": "module",
+  "exports": {
+    ".": {
+      "import": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    },
+    "./fixtures": {
+      "import": "./dist/fixtures.js",
+      "types": "./dist/fixtures.d.ts"
+    },
+    "./mocks": {
+      "import": "./dist/mocks.js",
+      "types": "./dist/mocks.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsc",
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@scalix/core": "workspace:*",
+    "vitest": "^1.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "typescript": "^5.3.3"
+  },
+  "keywords": [
+    "testing",
+    "fixtures",
+    "mocks",
+    "agent",
+    "orchestration"
+  ]
+}

@@ -20,8 +20,11 @@ export default defineConfig({
   resolve: {
     alias: {
       '@scalix/core': path.resolve(__dirname, './core/src'),
+      '@scalix/api': path.resolve(__dirname, './packages/api/src'),
+      '@scalix/cli': path.resolve(__dirname, './packages/cli/src'),
       '@scalix/sdk': path.resolve(__dirname, './packages/sdk/src'),
       '@scalix/schemas': path.resolve(__dirname, './packages/schemas/src'),
+      '@scalix/testing': path.resolve(__dirname, './packages/testing/src'),
       '@scalix/utils': path.resolve(__dirname, './packages/utils/src'),
       '@scalix/types': path.resolve(__dirname, './packages/types/src'),
     },
