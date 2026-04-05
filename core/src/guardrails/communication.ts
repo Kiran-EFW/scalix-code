@@ -121,7 +121,7 @@ export class CommunicationManager {
   private recommendations: Recommendation[] = [];
   private pendingConfirmations: Map<string, UserInteraction> = new Map();
   private interactionHistory: UserInteraction[] = [];
-  private maxHistorySize = 500;
+  private _maxHistorySize = 500;
 
   /**
    * Ask a clarifying question

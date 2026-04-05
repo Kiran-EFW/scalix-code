@@ -12,7 +12,6 @@ import type {
   AgentState,
   ExecutionResult,
   Cost,
-  LLMProvider,
 } from './types';
 import type { ToolRegistry, ToolCall } from '../tools/types';
 import type { Tracer, Logger } from '../observability/types';

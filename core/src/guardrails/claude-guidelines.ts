@@ -56,11 +56,9 @@ export interface GuidelineValidationResult {
  */
 export class ClaudeGuidelineChecker {
   private guidelines: ParsedGuideline[] = [];
-  private projectPath: string;
   private claudeMdPath: string;
 
   constructor(projectPath: string) {
-    this.projectPath = projectPath;
     this.claudeMdPath = join(projectPath, 'CLAUDE.md');
     this.loadGuidelines();
   }
@@ -322,7 +320,12 @@ export class ClaudeGuidelineChecker {
     severity: string;
     suggestion: string;
   }> {
-    const violations = [];
+    const violations: Array<{
+      guideline: ParsedGuideline;
+      violation: string;
+      severity: string;
+      suggestion: string;
+    }> = [];
 
     // Only check if this is production code (not test file)
     if (code.includes('describe(') || code.includes('it(') || code.includes('test(')) {

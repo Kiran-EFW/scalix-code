@@ -17,8 +17,6 @@ import {
   HookRegistry,
   PluginManager,
   SessionMetadata,
-  AgentUsageStats,
-  ToolUsageStats,
   HookContext,
   ConversationMetrics,
 } from './types';
@@ -32,7 +30,6 @@ export class ScalixConversationEngine implements ConversationEngine {
   private sessions: Map<string, ConversationState> = new Map();
   private mainAgent: MainAgent;
   private toolRegistry: Map<string, any>;
-  private sessionStoragePath: string;
   private guardrailsSystem: GuardrailsSystem;
   private communicationManager: CommunicationManager;
   private pendingConfirmations: Map<string, { confirmed: boolean; response?: string }> = new Map();
@@ -40,11 +37,10 @@ export class ScalixConversationEngine implements ConversationEngine {
   constructor(
     mainAgent: MainAgent,
     toolRegistry: Map<string, any>,
-    sessionStoragePath: string = '~/.scalix/sessions'
+    _sessionStoragePath: string = '~/.scalix/sessions'
   ) {
     this.mainAgent = mainAgent;
     this.toolRegistry = toolRegistry;
-    this.sessionStoragePath = sessionStoragePath;
     this.guardrailsSystem = new GuardrailsSystem();
     this.communicationManager = new CommunicationManager();
   }
@@ -414,16 +410,16 @@ export class ScalixConversationEngine implements ConversationEngine {
   }
 
   private createHookContext(
-    event: string,
+    _event: string,
     state: ConversationState,
     toolCall?: ToolCall
   ): HookContext {
     return {
       conversationState: state,
-      event: event as any,
+      event: '' as any,
       toolCall,
       warn: (message: string) => console.warn(message),
-      confirm: async (prompt: string) => {
+      confirm: async (_prompt: string) => {
         // TODO: Implement interactive confirmation
         return true;
       },
@@ -432,9 +428,9 @@ export class ScalixConversationEngine implements ConversationEngine {
   }
 
   private async executeHooks(
-    event: string,
-    state: ConversationState,
-    context?: HookContext
+    _event: string,
+    _state: ConversationState,
+    _context?: HookContext
   ): Promise<any[]> {
     // TODO: Hook execution logic
     return [];
@@ -487,7 +483,7 @@ export class ScalixConversationEngine implements ConversationEngine {
     // TODO: Persist to ~/.scalix/sessions/{sessionId}.json
   }
 
-  private async loadSession(sessionId: string): Promise<ConversationState | null> {
+  private async loadSession(_sessionId: string): Promise<ConversationState | null> {
     // TODO: Load from ~/.scalix/sessions/{sessionId}.json
     return null;
   }

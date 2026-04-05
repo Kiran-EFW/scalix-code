@@ -182,15 +182,15 @@ export class DefaultLogger implements Logger {
  * No-op logger for testing
  */
 export class NoOpLogger implements Logger {
-  debug(message: string, context?: Record<string, unknown>): void {
+  debug(_message: string, _context?: Record<string, unknown>): void {
     // No-op
   }
 
-  info(message: string, context?: Record<string, unknown>): void {
+  info(_message: string, _context?: Record<string, unknown>): void {
     // No-op
   }
 
-  warn(message: string, context?: Record<string, unknown>): void {
+  warn(_message: string, _context?: Record<string, unknown>): void {
     // No-op
   }
 

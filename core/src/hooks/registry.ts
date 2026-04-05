@@ -11,7 +11,6 @@ import {
   HookContext,
   HookRegistry,
   HookModification,
-  ConversationState,
 } from '../conversation/types';
 
 /**

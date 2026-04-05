@@ -238,7 +238,7 @@ export class GuardrailsSystem {
   async respondToConfirmation(
     confirmationId: string,
     response: 'approve' | 'reject' | 'modify' | 'escalate',
-    reason?: string
+    _reason?: string
   ): Promise<{ approved: boolean; message: string }> {
     const request = this.confirmationHistory.get(confirmationId);
     if (!request) {
