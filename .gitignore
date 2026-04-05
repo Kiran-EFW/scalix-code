@@ -1,0 +1,92 @@
+# Dependencies
+node_modules/
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
+out/
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+.env.local
+.env.*.local
+*.iml
+
+# Testing
+coverage/
+.nyc_output/
+*.lcov
+
+# Runtime
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment
+.env
+.env.example
+.env.test
+.env.local
+.env.*.local
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# VS Code extension
+.vscode-test/
+scalix-vscode-*.vsix
+packages/vscode-extension/media/
+!packages/vscode-extension/media/icon.png
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+pg_data/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.bak
+
+# Cache
+.cache/
+*.cache
+.eslintcache
+
+# Marketplace
+packages/marketplace/dist/
+packages/marketplace/build/
+
+# Performance profiling
+perf/
+*.prof
+
+# Documentation build
+docs/_build/
+docs/.doctrees/
+
+# Sensitive files
+.secrets
+secrets.json
+credentials.json
+api_keys.json
+
+# Large files
+*.tar.gz
+*.zip
+*.rar
