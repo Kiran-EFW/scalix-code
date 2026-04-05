@@ -86,7 +86,10 @@ export class ASTParser {
 
       // Extract exports
       sourceFile.getExportDeclarations().forEach(exp => {
-        exports.push(exp.getModuleSpecifierValue());
+        const val = exp.getModuleSpecifierValue();
+        if (val) {
+          exports.push(val);
+        }
       });
 
       return {
@@ -132,7 +135,7 @@ export class ASTParser {
       const exports: string[] = [];
 
       // Traverse AST to extract information
-      traverse.default(ast, {
+      (traverse as any)(ast, {
         FunctionDeclaration(path: any) {
           if (path.node.id?.name) {
             functions.push(path.node.id.name);
