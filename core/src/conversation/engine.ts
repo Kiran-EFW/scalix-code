@@ -479,7 +479,7 @@ export class ScalixConversationEngine implements ConversationEngine {
     }
   }
 
-  private async persistSession(state: ConversationState): Promise<void> {
+  private async persistSession(_state: ConversationState): Promise<void> {
     // TODO: Persist to ~/.scalix/sessions/{sessionId}.json
   }
 
