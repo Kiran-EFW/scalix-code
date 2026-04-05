@@ -1,0 +1,193 @@
+{
+  "name": "scalix-vscode",
+  "displayName": "Scalix Code",
+  "description": "AI-powered code analysis, explanation, and security scanning directly in VS Code",
+  "version": "0.5.0",
+  "license": "MIT",
+  "publisher": "scalix-org",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/scalix-org/scalix-code"
+  },
+  "engines": {
+    "vscode": "^1.85.0",
+    "node": ">=20.0.0"
+  },
+  "categories": [
+    "Programming Languages",
+    "Linters",
+    "Debuggers",
+    "Other"
+  ],
+  "keywords": [
+    "ai",
+    "code-analysis",
+    "code-explanation",
+    "security",
+    "metrics",
+    "refactoring"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "commands": [
+      {
+        "command": "scalix.analyzeCode",
+        "title": "Scalix: Analyze Code",
+        "description": "Analyze the codebase structure, architecture, and patterns"
+      },
+      {
+        "command": "scalix.explainCode",
+        "title": "Scalix: Explain Code",
+        "description": "Explain the selected code or active file"
+      },
+      {
+        "command": "scalix.scanSecurity",
+        "title": "Scalix: Scan for Security Issues",
+        "description": "Scan the current file or workspace for security vulnerabilities"
+      },
+      {
+        "command": "scalix.calculateMetrics",
+        "title": "Scalix: Calculate Metrics",
+        "description": "Calculate code metrics (LOC, complexity, functions)"
+      },
+      {
+        "command": "scalix.openResults",
+        "title": "Scalix: Open Results Panel",
+        "description": "Open the Scalix results panel"
+      },
+      {
+        "command": "scalix.configure",
+        "title": "Scalix: Configure",
+        "description": "Open Scalix configuration settings"
+      }
+    ],
+    "menus": {
+      "commandPalette": [
+        {
+          "command": "scalix.analyzeCode"
+        },
+        {
+          "command": "scalix.explainCode"
+        },
+        {
+          "command": "scalix.scanSecurity"
+        },
+        {
+          "command": "scalix.calculateMetrics"
+        },
+        {
+          "command": "scalix.openResults"
+        },
+        {
+          "command": "scalix.configure"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "scalix.explainCode",
+          "group": "1_modification",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "scalix.analyzeCode",
+          "group": "1_modification",
+          "when": "editorTextFocus"
+        },
+        {
+          "command": "scalix.scanSecurity",
+          "group": "1_modification",
+          "when": "editorTextFocus"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Scalix Code",
+      "properties": {
+        "scalix.apiUrl": {
+          "type": "string",
+          "default": "http://localhost:3000",
+          "description": "URL of the Scalix API server"
+        },
+        "scalix.apiKey": {
+          "type": "string",
+          "default": "",
+          "description": "API key for authentication (if required)",
+          "markdownDescription": "API key for authentication. Leave empty if not using authentication."
+        },
+        "scalix.enableSecurityScan": {
+          "type": "boolean",
+          "default": true,
+          "description": "Enable security scanning on file save"
+        },
+        "scalix.autoAnalyzeOnOpen": {
+          "type": "boolean",
+          "default": false,
+          "description": "Automatically analyze codebase when opening a workspace"
+        },
+        "scalix.model": {
+          "type": "string",
+          "default": "gpt-4",
+          "enum": ["gpt-4", "gpt-3.5-turbo", "claude-3-sonnet"],
+          "description": "LLM model to use for analysis"
+        },
+        "scalix.maxTokens": {
+          "type": "number",
+          "default": 4000,
+          "minimum": 500,
+          "maximum": 16000,
+          "description": "Maximum tokens for LLM responses"
+        },
+        "scalix.timeout": {
+          "type": "number",
+          "default": 30000,
+          "minimum": 5000,
+          "maximum": 120000,
+          "description": "Timeout for agent execution in milliseconds"
+        },
+        "scalix.showStatusBar": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show Scalix status bar item"
+        },
+        "scalix.debug": {
+          "type": "boolean",
+          "default": false,
+          "description": "Enable debug logging"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "dev": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --watch",
+    "build": "esbuild src/extension.ts --bundle --outfile=dist/extension.js --external:vscode --minify",
+    "compile": "tsc --noEmit",
+    "test": "vitest",
+    "test:watch": "vitest --watch",
+    "test:coverage": "vitest --coverage",
+    "lint": "eslint src --ext .ts",
+    "format": "prettier --write 'src/**/*.ts'",
+    "type-check": "tsc --noEmit",
+    "package": "vsce package",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@scalix/sdk": "workspace:*",
+    "ws": "^8.16.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/vscode": "^1.85.0",
+    "@typescript-eslint/eslint-plugin": "^6.13.0",
+    "@typescript-eslint/parser": "^6.13.0",
+    "@vscode/test-electron": "^2.3.8",
+    "@vscode/vsce": "^2.22.0",
+    "esbuild": "^0.19.10",
+    "eslint": "^8.54.0",
+    "prettier": "^3.1.0",
+    "typescript": "^5.3.3",
+    "vitest": "^1.0.4"
+  }
+}

@@ -32,7 +32,8 @@
       "@scalix/sdk": ["./packages/sdk/src/index.ts"],
       "@scalix/schemas": ["./packages/schemas/src/index.ts"],
       "@scalix/utils": ["./packages/utils/src/index.ts"],
-      "@scalix/types": ["./packages/types/src/index.ts"]
+      "@scalix/types": ["./packages/types/src/index.ts"],
+      "@scalix/vscode/*": ["./packages/vscode-extension/src/*"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx"],
