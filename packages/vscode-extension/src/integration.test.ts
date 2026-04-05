@@ -77,6 +77,7 @@ vi.mock('vscode', () => ({
   ViewColumn: { Two: 2 },
   ProgressLocation: { Notification: 1 },
   StatusBarAlignment: { Right: 2 },
+  CodeActionKind: { QuickFix: 'quickfix', Refactor: 'refactor' },
   DiagnosticSeverity: { Error: 0, Warning: 1, Information: 2, Hint: 3 },
   Range: class {
     constructor(
@@ -125,7 +126,17 @@ vi.mock('@scalix/sdk', () => ({
 
 // ── Mock ws ─────────────────────────────────────────────────────────────────
 vi.mock('ws', () => {
-  const MockWebSocket = vi.fn();
+  const MockWebSocket = vi.fn(() => ({
+    readyState: 1,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    send: vi.fn(),
+    close: vi.fn(),
+    onopen: null,
+    onclose: null,
+    onerror: null,
+    onmessage: null,
+  }));
   MockWebSocket.OPEN = 1;
   MockWebSocket.CONNECTING = 0;
   return { default: MockWebSocket, WebSocket: MockWebSocket };
