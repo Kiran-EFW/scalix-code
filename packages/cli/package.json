@@ -1,0 +1,46 @@
+{
+  "name": "@scalix/cli",
+  "version": "0.1.0",
+  "description": "Terminal CLI for Scalix CLAW agent platform",
+  "license": "MIT",
+  "type": "module",
+  "main": "./dist/index.js",
+  "bin": {
+    "claw": "./dist/cli.js"
+  },
+  "scripts": {
+    "dev": "tsx watch src/cli.ts",
+    "build": "tsc",
+    "start": "node dist/cli.js",
+    "test": "vitest",
+    "lint": "eslint src --ext .ts",
+    "type-check": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@scalix/api": "workspace:*",
+    "@scalix/sdk": "workspace:*",
+    "chalk": "^5.3.0",
+    "commander": "^11.1.0",
+    "ora": "^8.0.1",
+    "table": "^6.8.1",
+    "strip-ansi": "^7.1.0",
+    "inquirer": "^9.2.11",
+    "fs-extra": "^11.2.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.10.0",
+    "@types/fs-extra": "^11.0.4",
+    "typescript": "^5.3.3",
+    "tsx": "^4.7.0",
+    "vitest": "^1.0.4",
+    "eslint": "^8.54.0"
+  },
+  "keywords": [
+    "cli",
+    "agent",
+    "orchestration",
+    "terminal",
+    "claw"
+  ]
+}
