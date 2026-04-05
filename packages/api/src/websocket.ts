@@ -6,7 +6,7 @@
 
 import { WebSocketServer, WebSocket } from 'ws';
 import { Server as HttpServer } from 'http';
-import { Scalix CodePlatform } from '@scalix/core';
+import { ScalixCodePlatform } from '@scalix/core';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -14,7 +14,9 @@ import { v4 as uuidv4 } from 'uuid';
  */
 export type WSMessageType =
   | 'subscribe'
+  | 'subscribed'
   | 'unsubscribe'
+  | 'unsubscribed'
   | 'execute'
   | 'execution_started'
   | 'execution_progress'
@@ -41,7 +43,7 @@ export interface WSMessage {
 interface WSConnection {
   id: string;
   ws: WebSocket;
-  platform: Scalix CodePlatform;
+  platform: ScalixCodePlatform;
   subscriptions: Set<string>; // trace IDs, agent IDs, etc.
 }
 
@@ -50,7 +52,7 @@ interface WSConnection {
  */
 export function attachWebSocketServer(
   httpServer: HttpServer,
-  platform: Scalix CodePlatform
+  platform: ScalixCodePlatform
 ): WebSocketServer {
   const wss = new WebSocketServer({ server: httpServer });
   const connections = new Map<string, WSConnection>();
@@ -167,7 +169,7 @@ function handleMessage(
 async function handleExecuteStream(
   connection: WSConnection,
   message: WSMessage,
-  allConnections: Map<string, WSConnection>
+  _allConnections: Map<string, WSConnection>
 ) {
   const { platform, ws } = connection;
   const { agentId, input } = message.data || {};
