@@ -8,5 +8,5 @@ export * from '@scalix/core';
 export { createClient } from './client';
 export { createAgent } from './agent-builder';
 
-export type { Scalix CodeClient } from './client';
+export type { ScalixCodeClient } from './client';
 export type { AgentBuilder } from './agent-builder';
