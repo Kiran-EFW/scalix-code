@@ -21,8 +21,8 @@ export class ToolRegistry implements ToolRegistryInterface {
   /**
    * Register a tool
    */
-  register(tool: Partial<Tool>): void {
-    if (this.tools.has(tool.name as string)) {
+  async register(tool: Tool): Promise<void> {
+    if (this.tools.has(tool.name)) {
       throw new Error(`Tool already registered: ${tool.name}`);
     }
 
@@ -34,9 +34,7 @@ export class ToolRegistry implements ToolRegistryInterface {
       throw new Error('Tool description is required and must be a string');
     }
 
-    // Make parameters optional - default to empty array
-    const parameters = tool.parameters || [];
-    if (!Array.isArray(parameters)) {
+    if (!Array.isArray(tool.parameters)) {
       throw new Error('Tool parameters must be an array');
     }
 
@@ -44,22 +42,12 @@ export class ToolRegistry implements ToolRegistryInterface {
       throw new Error('Tool execute must be a function');
     }
 
-    // Ensure tool has all required properties
-    const completeTool: Tool = {
-      name: tool.name,
-      description: tool.description,
-      parameters: parameters as any[],
-      execute: tool.execute as any,
-      timeout: tool.timeout,
-      rateLimit: tool.rateLimit,
-    };
-
-    this.tools.set(tool.name, completeTool);
+    this.tools.set(tool.name, tool);
 
     // Register rate limit if specified
-    if (completeTool.rateLimit) {
+    if (tool.rateLimit) {
       this.dispatcher.setRateLimit(
-        completeTool.name,
+        tool.name,
         tool.rateLimit.maxCalls,
         tool.rateLimit.windowMs
       );
@@ -109,7 +97,7 @@ export class ToolRegistry implements ToolRegistryInterface {
   /**
    * Register built-in tools
    */
-  registerBuiltins(): Promise<void> {
+  async registerBuiltins(): Promise<void> {
     const builtins: Tool[] = [
       {
         name: 'echo',
@@ -162,8 +150,8 @@ export class ToolRegistry implements ToolRegistryInterface {
       },
     ];
 
-    return Promise.all(builtins.map((tool) => this.register(tool))).then(
-      () => undefined
-    );
+    for (const tool of builtins) {
+      await this.register(tool);
+    }
   }
 }

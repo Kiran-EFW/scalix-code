@@ -195,9 +195,9 @@ export class NoOpLogger implements Logger {
   }
 
   error(
-    message: string,
-    error?: Error,
-    context?: Record<string, unknown>
+    _message: string,
+    _error?: Error,
+    _context?: Record<string, unknown>
   ): void {
     // No-op
   }

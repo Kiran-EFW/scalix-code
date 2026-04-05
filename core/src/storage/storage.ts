@@ -126,38 +126,38 @@ export class InMemoryStorage implements Storage {
  * No-op storage for testing
  */
 export class NoOpStorage implements Storage {
-  async saveMemory(memory: AgentMemory): Promise<void> {
+  async saveMemory(_memory: AgentMemory): Promise<void> {
     // No-op
   }
 
-  async loadMemory(agentId: string): Promise<AgentMemory | undefined> {
+  async loadMemory(_agentId: string): Promise<AgentMemory | undefined> {
     return undefined;
   }
 
-  async deleteMemory(agentId: string): Promise<void> {
+  async deleteMemory(_agentId: string): Promise<void> {
     // No-op
   }
 
-  async saveExecutionResult(result: ExecutionResult): Promise<void> {
+  async saveExecutionResult(_result: ExecutionResult): Promise<void> {
     // No-op
   }
 
   async loadExecutionResults(
-    agentId: string,
-    limit?: number
+    _agentId: string,
+    _limit?: number
   ): Promise<ExecutionResult[]> {
     return [];
   }
 
-  async saveCheckpoint(checkpoint: ExecutionCheckpoint): Promise<void> {
+  async saveCheckpoint(_checkpoint: ExecutionCheckpoint): Promise<void> {
     // No-op
   }
 
-  async loadCheckpoint(agentId: string): Promise<ExecutionCheckpoint | undefined> {
+  async loadCheckpoint(_agentId: string): Promise<ExecutionCheckpoint | undefined> {
     return undefined;
   }
 
-  async deleteCheckpoint(id: string): Promise<void> {
+  async deleteCheckpoint(_id: string): Promise<void> {
     // No-op
   }
 

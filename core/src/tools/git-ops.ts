@@ -117,10 +117,10 @@ export const gitDiffTool: ToolDefinition = {
 export const gitCommitTool: ToolDefinition = {
   name: 'gitCommit',
   description: 'Commit staged changes with a message',
-  handler: async (args: { message: string; author?: string }, context: ToolExecutionContext) => {
+  handler: async (args: Record<string, any>, context: ToolExecutionContext) => {
     try {
       const projectPath = context.conversationState.projectPath;
-      const message = args.message;
+      const message = (args as any)?.message as string;
 
       // Validate message
       if (!message || message.trim().length === 0) {
@@ -151,7 +151,7 @@ export const gitCommitTool: ToolDefinition = {
       }
 
       // Create commit
-      const author = args.author || '';
+      const author = (args as any)?.author || '';
       const authorFlag = author ? `--author="${author}"` : '';
 
       const output = execSync(`git commit -m "${message}" ${authorFlag}`, {

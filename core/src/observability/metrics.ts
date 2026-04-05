@@ -223,7 +223,7 @@ export class DefaultMetricsCollector implements MetricsCollector {
  * No-op metrics collector for testing
  */
 export class NoOpMetricsCollector implements MetricsCollector {
-  recordMetric(metric: Metric): void {
+  recordMetric(_metric: Metric): void {
     // No-op
   }
 

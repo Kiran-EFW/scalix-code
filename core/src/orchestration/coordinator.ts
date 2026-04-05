@@ -9,7 +9,6 @@ import type {
   Coordinator,
   Workflow,
   WorkflowExecutionResult,
-  CoordinationPattern,
 } from './types';
 
 /**
@@ -18,67 +17,56 @@ import type {
 export class WorkflowCoordinator implements Coordinator {
   /**
    * Execute a workflow with the given agents
-   * Returns array of execution results (not wrapped in WorkflowExecutionResult)
    */
   async executeWorkflow(
     workflow: Workflow,
-    agentsMap: Map<string, Agent> | Agent[]
-  ): Promise<ExecutionResult[]> {
-    // Validate workflow structure
-    if (!workflow.pattern) {
-      throw new Error('Workflow must have a pattern');
-    }
-
-    const validPatterns = ['sequential', 'parallel', 'tree', 'reactive', 'mesh'];
-    if (!validPatterns.includes(workflow.pattern)) {
-      throw new Error(`Invalid workflow pattern: ${workflow.pattern}`);
-    }
-
-    // Convert agents array to map if needed
-    const agents = agentsMap instanceof Map
-      ? agentsMap
-      : new Map(agentsMap.map((a) => [a.id, a]));
+    agents: Agent[]
+  ): Promise<WorkflowExecutionResult> {
+    const startTime = Date.now();
+    const agentsMap = new Map(agents.map((a) => [a.id, a]));
 
     const stepResults: ExecutionResult[] = [];
 
     try {
       for (const step of workflow.steps) {
         // Validate agent IDs exist
-        const agentId = (step as any).agentId || (step as any).agentIds?.[0];
-        if (!agentId) {
-          throw new Error(`Step must have agentId or agentIds`);
+        const agentIds = step.agentIds || [];
+        if (agentIds.length === 0) {
+          throw new Error(`Step ${step.id} must have agentIds`);
         }
 
-        const agent = agents.get(agentId);
-        if (!agent) {
-          throw new Error(`Agent not found: ${agentId}`);
+        const stepAgents = agentIds
+          .map((id) => agentsMap.get(id))
+          .filter((a): a is Agent => a !== undefined);
+
+        if (stepAgents.length === 0) {
+          throw new Error(`No valid agents found for step ${step.id}`);
         }
 
-        const agentsList = [agent];
-        const stepInput = (step as any).input || {};
+        const stepInput = step.inputs || {};
         let stepResult: ExecutionResult | ExecutionResult[];
 
-        switch (workflow.pattern) {
+        switch (step.pattern) {
           case 'sequential':
-            stepResult = await this.executeSequential(agentsList, stepInput);
+            stepResult = await this.executeSequential(stepAgents, stepInput);
             break;
           case 'parallel':
-            stepResult = await this.executeParallel(agentsList, stepInput);
+            stepResult = await this.executeParallel(stepAgents, stepInput);
             break;
           case 'tree':
-            stepResult = await this.executeTree(agent, new Map(), stepInput);
+            stepResult = await this.executeTree(stepAgents[0], new Map(), stepInput);
             break;
           case 'reactive':
             stepResult = await this.executeReactive(
-              agentsList,
+              stepAgents,
               this.emptyAsyncIterable()
             );
             break;
           case 'mesh':
-            stepResult = await this.executeParallel(agentsList, stepInput);
+            stepResult = await this.executeParallel(stepAgents, stepInput);
             break;
           default:
-            throw new Error(`Unknown pattern: ${workflow.pattern}`);
+            throw new Error(`Unknown pattern: ${step.pattern}`);
         }
 
         // Collect results
@@ -89,10 +77,25 @@ export class WorkflowCoordinator implements Coordinator {
         }
       }
 
-      return stepResults;
+      return {
+        workflowId: workflow.id,
+        status: 'success',
+        stepResults,
+        duration: Date.now() - startTime,
+      };
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Unknown error';
-      throw err; // Re-throw validation errors
+      const error = err instanceof Error ? err : new Error('Unknown error');
+      return {
+        workflowId: workflow.id,
+        status: 'failure',
+        stepResults,
+        duration: Date.now() - startTime,
+        error: {
+          stepId: 'unknown',
+          agentId: 'unknown',
+          message: error.message,
+        },
+      };
     }
   }
 

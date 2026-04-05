@@ -4,7 +4,7 @@
  * Persistent state management for agents and workflows.
  */
 
-import type { Agent, ExecutionResult } from '../agent/types';
+import type { ExecutionResult } from '../agent/types';
 
 /**
  * Agent memory - persistent state for an agent

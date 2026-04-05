@@ -14,8 +14,8 @@ import { ToolDefinition, ToolExecutionContext } from '../conversation/types';
 export const readFileTool: ToolDefinition = {
   name: 'readFile',
   description: 'Read the contents of a file',
-  handler: async (args: { path: string }, context: ToolExecutionContext) => {
-    const filePath = args.path;
+  handler: async (args: Record<string, any>, context: ToolExecutionContext) => {
+    const filePath = (args as any)?.path as string;
 
     // Validate path safety
     validateFilePath(filePath, context);
@@ -69,11 +69,12 @@ export const writeFileTool: ToolDefinition = {
   name: 'writeFile',
   description: 'Write content to a file (creates or overwrites)',
   handler: async (
-    args: { path: string; content: string; overwrite?: boolean },
+    args: Record<string, any>,
     context: ToolExecutionContext
   ) => {
-    const filePath = args.path;
-    const content = args.content;
+    const filePath = (args as any)?.path as string;
+    const content = (args as any)?.content as string;
+    const overwrite = (args as any)?.overwrite;
 
     // Validate path safety
     validateFilePath(filePath, context);
@@ -89,7 +90,7 @@ export const writeFileTool: ToolDefinition = {
       }
 
       // Require confirmation if overwriting
-      if (exists && !args.overwrite) {
+      if (exists && !overwrite) {
         return {
           success: false,
           error: `File ${filePath} already exists. Set overwrite: true to replace it.`,
@@ -146,8 +147,10 @@ export const writeFileTool: ToolDefinition = {
 export const createFileTool: ToolDefinition = {
   name: 'createFile',
   description: 'Create a new file (fails if file exists)',
-  handler: async (args: { path: string; content?: string; template?: string }, context: ToolExecutionContext) => {
-    const filePath = args.path;
+  handler: async (args: Record<string, any>, context: ToolExecutionContext) => {
+    const filePath = (args as any)?.path as string;
+    const content = (args as any)?.content as string | undefined;
+    const template = (args as any)?.template as string | undefined;
 
     // Validate path safety
     validateFilePath(filePath, context);
@@ -165,10 +168,10 @@ export const createFileTool: ToolDefinition = {
       }
 
       // Determine content
-      let content = args.content || '';
+      let finalContent = content || '';
 
-      if (args.template) {
-        content = getFileTemplate(args.template, filePath);
+      if (template) {
+        finalContent = getFileTemplate(template, filePath);
       }
 
       // Ensure directory exists
@@ -176,7 +179,7 @@ export const createFileTool: ToolDefinition = {
       await fs.mkdir(dir, { recursive: true });
 
       // Write file
-      await fs.writeFile(filePath, content, 'utf-8');
+      await fs.writeFile(filePath, finalContent, 'utf-8');
 
       return {
         success: true,
@@ -221,8 +224,8 @@ export const createFileTool: ToolDefinition = {
 export const deleteFileTool: ToolDefinition = {
   name: 'deleteFile',
   description: 'Delete a file',
-  handler: async (args: { path: string }, context: ToolExecutionContext) => {
-    const filePath = args.path;
+  handler: async (args: Record<string, any>, context: ToolExecutionContext) => {
+    const filePath = (args as any)?.path as string;
 
     // Validate path safety
     validateFilePath(filePath, context);
@@ -264,14 +267,11 @@ export const deleteFileTool: ToolDefinition = {
 export const listFilesTool: ToolDefinition = {
   name: 'listFiles',
   description: 'List files matching a pattern (glob)',
-  handler: async (args: { pattern: string; maxResults?: number }, context: ToolExecutionContext) => {
-    const pattern = args.pattern;
-    const maxResults = args.maxResults || 100;
+  handler: async (args: Record<string, any>, _context: ToolExecutionContext) => {
+    const pattern = (args as any)?.pattern as string;
+    const _maxResults = (args as any)?.maxResults || 100;
 
     try {
-      // Simple glob implementation - would use glob library in production
-      const files: string[] = [];
-
       // For now, return helpful message
       return {
         success: true,
@@ -313,12 +313,12 @@ export const findInFilesTool: ToolDefinition = {
   name: 'findInFiles',
   description: 'Search for files containing a pattern',
   handler: async (
-    args: { pattern: string; path?: string; maxResults?: number },
-    context: ToolExecutionContext
+    args: Record<string, any>,
+    _context: ToolExecutionContext
   ) => {
-    const pattern = args.pattern;
-    const searchPath = args.path || '.';
-    const maxResults = args.maxResults || 50;
+    const pattern = (args as any)?.pattern as string;
+    const searchPath = (args as any)?.path || '.';
+    const maxResults = (args as any)?.maxResults || 50;
 
     try {
       // Would use grep/ripgrep in production

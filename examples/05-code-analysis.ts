@@ -7,7 +7,7 @@
  * - SecurityAnalyzer: Find security issues
  */
 
-import { Scalix CodePlatform } from '../core/src/platform';
+import { ScalixCodePlatform } from '../core/src/platform';
 import { createDefaultProvider } from '../core/src/agent/llm-provider';
 import {
   codebaseAnalyzerConfig,
@@ -20,7 +20,7 @@ async function runExample() {
   console.log('🔍 Scalix Code Developer Agents Example\n');
 
   // Create platform with real LLM provider
-  const platform = Scalix CodePlatform.createPlatform({
+  const platform = ScalixCodePlatform.createPlatform({
     llmProvider: createDefaultProvider(),
   });
 

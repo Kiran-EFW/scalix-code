@@ -4,7 +4,7 @@
  * Safe command execution with output capture and timeout protection
  */
 
-import { execSync, spawn } from 'child_process';
+import { execSync } from 'child_process';
 import { ToolDefinition, ToolExecutionContext } from '../conversation/types';
 
 /**
@@ -20,7 +20,8 @@ export const bashExecTool: ToolDefinition = {
     const command = args.command;
     const cwd = args.cwd || context.conversationState.projectPath;
     const timeout = args.timeout || 30000; // 30 seconds default
-    const shell = args.shell || '/bin/bash';
+    // shell variable commented - execSync doesn't need explicit shell param
+    // const shell = args.shell || '/bin/bash';
 
     // Validate command safety
     const validation = validateCommand(command, context);
@@ -151,11 +152,11 @@ export const runTestsTool: ToolDefinition = {
     }
 
     // Add filters
-    if (args.filter) {
+    if (args?.filter) {
       testCommand += ` -- ${args.filter}`;
     }
 
-    if (args.watch) {
+    if (args?.watch) {
       testCommand += ' --watch';
     }
 
@@ -257,7 +258,7 @@ interface ValidationResult {
 /**
  * Validate command safety
  */
-function validateCommand(command: string, context: ToolExecutionContext): ValidationResult {
+function validateCommand(command: string, _context: ToolExecutionContext): ValidationResult {
   // Check blocked patterns
   const blockedPatterns = [
     { pattern: /rm\s+-rf\s+\//i, reason: 'Recursive deletion from root', suggestion: 'Be specific with paths' },

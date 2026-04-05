@@ -5,7 +5,7 @@
  * Supports TypeScript, JavaScript, Python, and more
  */
 
-import { Project, SyntaxKind } from 'ts-morph';
+import { Project } from 'ts-morph';
 import * as parser from '@babel/parser';
 import traverse from '@babel/traverse';
 import { z } from 'zod';
@@ -133,33 +133,33 @@ export class ASTParser {
 
       // Traverse AST to extract information
       traverse.default(ast, {
-        FunctionDeclaration(path) {
+        FunctionDeclaration(path: any) {
           if (path.node.id?.name) {
             functions.push(path.node.id.name);
           }
         },
-        ArrowFunctionExpression(path) {
+        ArrowFunctionExpression(path: any) {
           // Get function name if assigned
-          if (path.parent.type === 'VariableDeclarator' && path.parent.id.type === 'Identifier') {
-            functions.push(path.parent.id.name);
+          if (path.parent?.type === 'VariableDeclarator' && (path.parent as any).id?.type === 'Identifier') {
+            functions.push((path.parent as any).id.name);
           }
         },
-        ClassDeclaration(path) {
+        ClassDeclaration(path: any) {
           if (path.node.id?.name) {
             classes.push(path.node.id.name);
           }
         },
-        ImportDeclaration(path) {
+        ImportDeclaration(path: any) {
           imports.push(path.node.source.value);
         },
-        ExportNamedDeclaration(path) {
+        ExportNamedDeclaration(path: any) {
           if (path.node.source) {
             exports.push(path.node.source.value);
           }
         },
-        ExportDefaultDeclaration(path) {
-          if (path.node.declaration.type === 'Identifier') {
-            exports.push(`default: ${path.node.declaration.name}`);
+        ExportDefaultDeclaration(path: any) {
+          if ((path.node.declaration as any)?.type === 'Identifier') {
+            exports.push(`default: ${(path.node.declaration as any).name}`);
           }
         },
       });

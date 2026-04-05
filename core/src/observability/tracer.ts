@@ -153,11 +153,11 @@ export class NoOpTracer implements Tracer {
     };
   }
 
-  endSpan(span: TraceSpan, status: 'success' | 'error' | 'timeout'): void {
+  endSpan(_span: TraceSpan, _status: 'success' | 'error' | 'timeout'): void {
     // No-op
   }
 
-  recordEvent(span: TraceSpan, event: TraceEvent): void {
+  recordEvent(_span: TraceSpan, _event: TraceEvent): void {
     // No-op
   }
 

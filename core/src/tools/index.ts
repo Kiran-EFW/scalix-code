@@ -6,5 +6,5 @@
  */
 
 export * from './types';
-export * from './registry';
-export * from './dispatcher';
+export { ToolRegistry } from './registry';
+export { ToolDispatcher } from './dispatcher';
