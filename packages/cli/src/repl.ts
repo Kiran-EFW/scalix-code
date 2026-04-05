@@ -6,6 +6,7 @@ import * as readline from 'readline';
 import chalk from 'chalk';
 import { getClient, testConnection } from './utils/client';
 import { success, error, warning, header, highlight, formatDuration, formatCost, formatStatus } from './utils/formatting';
+import { printWelcome, printGoodbye } from './utils/logo';
 
 interface ReplContext {
   client: ReturnType<typeof getClient>;
@@ -27,6 +28,9 @@ export async function repl(config: any): Promise<void> {
     debug: config.debug || false,
   };
 
+  // Print welcome banner
+  printWelcome();
+
   // Test connection
   const connected = await testConnection(config);
   if (!connected) {
@@ -35,7 +39,6 @@ export async function repl(config: any): Promise<void> {
     process.exit(1);
   }
 
-  header('🚀 Scalix CLAW Interactive REPL');
   console.log(`Connected to ${highlight(`${config.host}:${config.port}`)}`);
   console.log(`Type ${highlight('help')} for available commands\n`);
 
@@ -80,7 +83,7 @@ async function handleInput(
 
       case 'quit':
       case 'exit':
-        console.log(chalk.yellow('\nGoodbye!'));
+        printGoodbye();
         rl.close();
         process.exit(0);
 
