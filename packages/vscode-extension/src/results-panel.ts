@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { AgentResult } from './types';
-import { ExecutionProgressData } from './websocket-client';
+import { ExecutionProgress } from './websocket-client';
 
 export class ResultsPanel {
   private panel: vscode.WebviewPanel | null = null;
   private lastResult: AgentResult | null = null;
-  private currentProgress: ExecutionProgressData | null = null;
+  private currentProgress: ExecutionProgress | null = null;
   private streamingOutput = '';
   private isStreaming = false;
 
@@ -54,6 +54,7 @@ export class ResultsPanel {
     this.currentProgress = {
       executionId,
       agentId,
+      status: 'started',
       progress: 0,
       message: 'Starting execution...',
     };
@@ -66,7 +67,7 @@ export class ResultsPanel {
   /**
    * Update progress during streaming execution
    */
-  updateProgress(progress: ExecutionProgressData): void {
+  updateProgress(progress: ExecutionProgress): void {
     this.currentProgress = progress;
 
     if (progress.message) {

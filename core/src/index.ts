@@ -26,6 +26,9 @@ export * from './plugins/index';
 // API module exports
 export * from './api/index';
 
+// Performance module exports
+export * from './performance/index';
+
 // Platform exports
 export * from './platform';
 
