@@ -1,7 +1,7 @@
 {
-  "name": "scalix-claw",
-  "version": "0.1.0",
-  "description": "Production-ready agent orchestration platform",
+  "name": "scalix-code",
+  "version": "0.5.0",
+  "description": "Open-source, self-hosted Claude Code alternative with safety guardrails",
   "license": "MIT",
   "private": true,
   "type": "module",
@@ -44,21 +44,24 @@
     "@changesets/cli": "^2.27.1"
   },
   "keywords": [
+    "claude-code",
     "agent",
-    "orchestration",
-    "multi-agent",
-    "workflow",
-    "automation",
+    "conversational-ai",
+    "cli",
+    "guardrails",
+    "safety",
+    "observability",
+    "self-hosted",
+    "open-source",
     "ai",
-    "llm",
-    "production"
+    "llm"
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/scalix/claw"
+    "url": "https://github.com/scalix-org/scalix-code"
   },
   "bugs": {
-    "url": "https://github.com/scalix/claw/issues"
+    "url": "https://github.com/scalix-org/scalix-code/issues"
   },
-  "homepage": "https://claw.scalix.dev"
+  "homepage": "https://scalix-code.dev"
 }
