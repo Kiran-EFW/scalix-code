@@ -1,0 +1,17 @@
+{
+  "id": "feature-dev",
+  "name": "Feature Development",
+  "version": "1.0.0",
+  "description": "Guided feature development workflow with structured 7-phase approach",
+  "author": "Scalix Team",
+  "license": "MIT",
+  "homepage": "https://scalix.dev/plugins/feature-dev",
+  "repository": "https://github.com/scalix/claw/tree/main/packages/plugins/feature-dev",
+  "capabilities": {
+    "commands": ["feature-dev", "feature-plan", "feature-status"],
+    "agents": ["architect", "code-explorer"],
+    "skills": ["feature-planning", "requirements-analysis"],
+    "hooks": ["FeatureStart", "FeatureComplete"]
+  },
+  "requiredVersion": "0.4.0"
+}

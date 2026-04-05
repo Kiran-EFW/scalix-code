@@ -1,0 +1,17 @@
+{
+  "id": "debugging",
+  "name": "Debugging",
+  "version": "1.0.0",
+  "description": "Advanced debugging tools and strategies for finding and fixing bugs",
+  "author": "Scalix Team",
+  "license": "MIT",
+  "homepage": "https://scalix.dev/plugins/debugging",
+  "repository": "https://github.com/scalix/claw/tree/main/packages/plugins/debugging",
+  "capabilities": {
+    "commands": ["debug", "debug-error", "debug-trace"],
+    "agents": ["debugger", "error-analyzer"],
+    "skills": ["error-diagnosis", "debugging-strategy"],
+    "hooks": ["DebugStart", "DebugEnd"]
+  },
+  "requiredVersion": "0.4.0"
+}

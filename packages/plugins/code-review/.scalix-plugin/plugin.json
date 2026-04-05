@@ -1,0 +1,17 @@
+{
+  "id": "code-review",
+  "name": "Code Review",
+  "version": "1.0.0",
+  "description": "Automated code review with specialized agents for quality, tests, and security",
+  "author": "Scalix Team",
+  "license": "MIT",
+  "homepage": "https://scalix.dev/plugins/code-review",
+  "repository": "https://github.com/scalix/claw/tree/main/packages/plugins/code-review",
+  "capabilities": {
+    "commands": ["review", "review-file", "review-pr"],
+    "agents": ["code-reviewer", "test-analyzer", "security-reviewer"],
+    "skills": ["code-quality", "testing-best-practices", "security-review"],
+    "hooks": ["ReviewStart", "ReviewComplete"]
+  },
+  "requiredVersion": "0.4.0"
+}

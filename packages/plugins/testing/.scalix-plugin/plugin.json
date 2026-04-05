@@ -1,0 +1,17 @@
+{
+  "id": "testing",
+  "name": "Testing",
+  "version": "1.0.0",
+  "description": "Testing tools for test generation, coverage analysis, and testing strategies",
+  "author": "Scalix Team",
+  "license": "MIT",
+  "homepage": "https://scalix.dev/plugins/testing",
+  "repository": "https://github.com/scalix/claw/tree/main/packages/plugins/testing",
+  "capabilities": {
+    "commands": ["test-gen", "coverage-report", "test-strategy"],
+    "agents": ["test-generator", "coverage-analyzer"],
+    "skills": ["test-writing", "testing-best-practices"],
+    "hooks": ["TestStart", "TestComplete"]
+  },
+  "requiredVersion": "0.4.0"
+}
