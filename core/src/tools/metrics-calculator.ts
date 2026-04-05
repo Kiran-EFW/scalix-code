@@ -79,7 +79,6 @@ export class MetricsCalculator {
   } {
     let complexity = 1; // Base complexity
     let functions = 0;
-    const functionMatches = content.match(/function\s+\w+|const\s+\w+\s*=\s*(?:async\s*)?\(|=>|\bif\b|\belse\b|\bcase\b|\bfor\b|\bwhile\b|\bcatch\b/g) || [];
 
     // Count function definitions
     functions = (content.match(/function\s+\w+|const\s+\w+\s*=\s*(?:async\s*)?\(/g) || []).length;

@@ -14,14 +14,14 @@ export const bashExecTool: ToolDefinition = {
   name: 'bashExec',
   description: 'Execute a bash command and capture output',
   handler: async (
-    args: { command: string; cwd?: string; timeout?: number; shell?: string },
+    args: Record<string, any>,
     context: ToolExecutionContext
   ) => {
-    const command = args.command;
-    const cwd = args.cwd || context.conversationState.projectPath;
-    const timeout = args.timeout || 30000; // 30 seconds default
+    const command = (args as any)?.command as string;
+    const cwd = (args as any)?.cwd || context.conversationState.projectPath;
+    const timeout = (args as any)?.timeout || 30000; // 30 seconds default
     // shell variable commented - execSync doesn't need explicit shell param
-    // const shell = args.shell || '/bin/bash';
+    // const shell = (args as any)?.shell || '/bin/bash';
 
     // Validate command safety
     const validation = validateCommand(command, context);
@@ -112,7 +112,7 @@ export const bashExecTool: ToolDefinition = {
       'curl.*|sh', // Download and execute
     ],
     rateLimit: { maxPerMinute: 20, maxPerHour: 200 },
-    costEstimate: (args: any) => ({
+    costEstimate: (_args: any) => ({
       costUSD: 0, // Bash execution is free
       inputTokens: 0,
       outputTokens: 0,

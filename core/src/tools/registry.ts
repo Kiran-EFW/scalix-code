@@ -89,7 +89,7 @@ export class ToolRegistry implements ToolRegistryInterface {
   /**
    * Get available tools for an agent
    */
-  getAvailable(agentId: string): Tool[] {
+  getAvailable(_agentId: string): Tool[] {
     // TODO: Implement agent-specific tool access control
     return this.getAll();
   }

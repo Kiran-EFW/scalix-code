@@ -269,7 +269,6 @@ export const listFilesTool: ToolDefinition = {
   description: 'List files matching a pattern (glob)',
   handler: async (args: Record<string, any>, _context: ToolExecutionContext) => {
     const pattern = (args as any)?.pattern as string;
-    const _maxResults = (args as any)?.maxResults || 100;
 
     try {
       // For now, return helpful message
@@ -390,7 +389,6 @@ function validateFilePath(filePath: string, context: ToolExecutionContext): void
  * Get template content for new files
  */
 function getFileTemplate(template: string, filePath: string): string {
-  const ext = path.extname(filePath);
 
   switch (template) {
     case 'test':

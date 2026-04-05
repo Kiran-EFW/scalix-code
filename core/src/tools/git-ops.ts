@@ -13,7 +13,7 @@ import { ToolDefinition, ToolExecutionContext } from '../conversation/types';
 export const gitStatusTool: ToolDefinition = {
   name: 'gitStatus',
   description: 'Get current git status (modified files, branches, commits)',
-  handler: async (args: any, context: ToolExecutionContext) => {
+  handler: async (_args: any, context: ToolExecutionContext) => {
     try {
       const projectPath = context.conversationState.projectPath;
       const output = execSync('git status --porcelain', { cwd: projectPath, encoding: 'utf-8' });

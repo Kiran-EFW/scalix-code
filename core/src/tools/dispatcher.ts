@@ -4,7 +4,7 @@
  * Safe tool execution with rate limiting and input validation
  */
 
-import type { Tool, ToolCall, ToolExecutionResult, ToolRegistry } from './types';
+import type { ToolCall, ToolExecutionResult, ToolRegistry } from './types';
 
 /**
  * Rate limiter implementation
