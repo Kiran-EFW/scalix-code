@@ -183,7 +183,7 @@ export class ResultsPanel {
           <div class="progress-fill"></div>
         </div>
 
-        ${progress.step ? `<div class="step-info">Step: ${this.escapeHtml(progress.step)}</div>` : ''}
+        ${progress.message ? `<div class="step-info">${this.escapeHtml(progress.message)}</div>` : ''}
         ${progressPercent != null ? `<div class="step-info">Progress: ${progressPercent}%</div>` : ''}
 
         <h3>Live Output</h3>

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { getScalixConfig, validateConfig } from './config';
 import { executeAgent, checkServerHealth } from './client';
+import { WebSocketClient, ExecutionProgress, getWebSocketClient } from './websocket-client';
 import {
   getExecutionContext,
   showExecutingProgress,
@@ -9,12 +10,20 @@ import {
 } from './utils';
 import { ResultsPanel } from './results-panel';
 import { StatusBarManager } from './status-bar';
+import { AgentResult } from './types';
 
 export class CommandManager {
+  private wsClient: WebSocketClient | null = null;
+  private activeCancellation: vscode.CancellationTokenSource | null = null;
+
   constructor(
     private resultsPanel: ResultsPanel,
     private statusBar: StatusBarManager
   ) {}
+
+  setWebSocketClient(client: WebSocketClient): void {
+    this.wsClient = client;
+  }
 
   async analyzeCode(): Promise<void> {
     const config = getScalixConfig();
@@ -111,12 +120,24 @@ export class CommandManager {
   }
 
   async openResults(): Promise<void> {
-    const context = vscode.window.activeTextEditor?.document.uri.fsPath || '';
     try {
       this.resultsPanel.show({} as any);
       showSuccessMessage('Results panel opened');
-    } catch (error) {
+    } catch {
       showErrorMessage('Failed to open results panel');
+    }
+  }
+
+  /**
+   * Cancel the currently running execution
+   */
+  cancelExecution(): void {
+    if (this.activeCancellation) {
+      this.activeCancellation.cancel();
+      this.activeCancellation.dispose();
+      this.activeCancellation = null;
+      this.statusBar.setRunning(false);
+      showSuccessMessage('Execution cancelled');
     }
   }
 
@@ -141,6 +162,117 @@ export class CommandManager {
     const context = getExecutionContext();
     this.statusBar.setRunning(true);
 
+    // Try WebSocket streaming first, fall back to REST
+    if (this.wsClient && this.wsClient.isConnected()) {
+      await this.executeViaWebSocket(agentId, input, config);
+    } else {
+      await this.executeViaRest(agentId, input, config, context);
+    }
+  }
+
+  /**
+   * Execute via WebSocket with real-time progress streaming
+   */
+  private async executeViaWebSocket(
+    agentId: string,
+    input: string,
+    config: ReturnType<typeof getScalixConfig>
+  ): Promise<void> {
+    if (!this.wsClient) {
+      return;
+    }
+
+    this.activeCancellation = new vscode.CancellationTokenSource();
+    const cancellation = this.activeCancellation;
+
+    try {
+      await vscode.window.withProgress(
+        {
+          location: vscode.ProgressLocation.Notification,
+          title: `Running Scalix: ${agentId}...`,
+          cancellable: true,
+        },
+        async (progress, token) => {
+          return new Promise<void>((resolve, reject) => {
+            // Handle VS Code cancellation
+            token.onCancellationRequested(() => {
+              this.wsClient?.cancel(agentId);
+              this.statusBar.setRunning(false);
+              resolve();
+            });
+
+            // Handle programmatic cancellation
+            cancellation.token.onCancellationRequested(() => {
+              this.wsClient?.cancel(agentId);
+              this.statusBar.setRunning(false);
+              resolve();
+            });
+
+            this.resultsPanel.showExecutionStarted(agentId, '');
+
+            this.wsClient!.executeWithProgress(
+              agentId,
+              input,
+              (execProgress: ExecutionProgress) => {
+                if (execProgress.status === 'progress') {
+                  const pct = execProgress.progress
+                    ? Math.round(execProgress.progress * 100)
+                    : undefined;
+                  progress.report({
+                    message: execProgress.message || 'Processing...',
+                    increment: pct,
+                  });
+                  this.resultsPanel.updateProgress(execProgress);
+                } else if (execProgress.status === 'completed') {
+                  const result: AgentResult = {
+                    executionId: execProgress.executionId,
+                    agentId: execProgress.agentId,
+                    status: 'success',
+                    output: execProgress.output || '',
+                    toolCalls: [],
+                    cost: execProgress.cost || { inputTokens: 0, outputTokens: 0, totalCost: 0 },
+                    duration: execProgress.duration || 0,
+                    iterations: execProgress.iterations || 0,
+                  };
+
+                  this.resultsPanel.setResult(result);
+                  this.resultsPanel.show({} as any);
+                  this.statusBar.setLastResult(result.output, result.cost);
+                  this.statusBar.setRunning(false);
+                  showSuccessMessage(
+                    `Analysis complete in ${((result.duration) / 1000).toFixed(2)}s`
+                  );
+                  resolve();
+                }
+              },
+              (error: string) => {
+                this.resultsPanel.showExecutionError(agentId, error);
+                this.statusBar.setError(new Error(error));
+                this.statusBar.setRunning(false);
+                showErrorMessage(`Analysis failed: ${error}`);
+                resolve();
+              }
+            );
+          });
+        }
+      );
+    } finally {
+      if (this.activeCancellation === cancellation) {
+        this.activeCancellation.dispose();
+        this.activeCancellation = null;
+      }
+    }
+  }
+
+  /**
+   * Execute via REST (fallback when WebSocket is not available)
+   */
+  private async executeViaRest(
+    agentId: string,
+    input: string,
+    config: ReturnType<typeof getScalixConfig>,
+    context: ReturnType<typeof getExecutionContext>
+  ): Promise<void> {
     try {
       const result = await showExecutingProgress(
         `Running Scalix: ${agentId}...`,
