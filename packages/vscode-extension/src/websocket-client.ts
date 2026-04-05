@@ -1,22 +1,11 @@
-/**
- * WebSocket Client for real-time agent execution streaming
- *
- * Connects to the Scalix API WebSocket server and handles
- * execution progress, results, and cancellation.
- */
-
-import { EventEmitter } from 'events';
+import * as vscode from 'vscode';
 import WebSocket from 'ws';
-import { ScalixConfig, AgentResult } from './types';
+import { AgentResult } from './types';
 
-/**
- * WebSocket message types (aligned with packages/api/src/websocket.ts)
- */
 export type WSMessageType =
   | 'subscribe'
   | 'unsubscribe'
   | 'execute'
-  | 'cancel'
   | 'execution_started'
   | 'execution_progress'
   | 'execution_completed'
@@ -26,345 +15,372 @@ export type WSMessageType =
   | 'metric'
   | 'error'
   | 'ping'
-  | 'pong'
-  | 'connected'
-  | 'subscribed'
-  | 'unsubscribed';
+  | 'pong';
 
 export interface WSMessage {
   type: WSMessageType;
   requestId?: string;
-  data?: any;
+  data?: unknown;
   error?: string;
   timestamp?: string;
 }
 
-export interface ExecutionProgressData {
+export interface ExecutionProgress {
   executionId: string;
   agentId: string;
-  step?: string;
+  status: 'started' | 'progress' | 'completed' | 'error';
   progress?: number;
   message?: string;
-}
-
-export interface ExecutionCompletedData {
-  executionId: string;
-  agentId: string;
-  status: string;
-  output: string;
-  duration: number;
-  iterations: number;
-  toolCalls: number;
-  cost: {
+  output?: string;
+  duration?: number;
+  iterations?: number;
+  cost?: {
     inputTokens: number;
     outputTokens: number;
     totalCost: number;
   };
 }
 
-export interface ExecutionErrorData {
-  executionId: string;
-  agentId: string;
-  error: string;
+type ProgressCallback = (progress: ExecutionProgress) => void;
+type ErrorCallback = (error: string) => void;
+
+interface PendingExecution {
+  requestId: string;
+  onProgress: ProgressCallback;
+  onError: ErrorCallback;
+  timeout: NodeJS.Timeout;
 }
 
-export type WebSocketClientEvent =
-  | 'connected'
-  | 'disconnected'
-  | 'execution_started'
-  | 'execution_progress'
-  | 'execution_completed'
-  | 'execution_error'
-  | 'log'
-  | 'error';
-
-/**
- * WebSocket client for communicating with the Scalix API server.
- * Provides real-time execution streaming and cancellation support.
- */
-export class ScalixWebSocketClient extends EventEmitter {
+export class WebSocketClient {
   private ws: WebSocket | null = null;
-  private config: ScalixConfig;
-  private reconnectTimer: ReturnType<typeof setTimeout> | null = null;
-  private pingTimer: ReturnType<typeof setInterval> | null = null;
-  private _isConnected = false;
-  private requestCounter = 0;
-  private pendingExecutions = new Map<string, {
-    resolve: (result: AgentResult) => void;
-    reject: (error: Error) => void;
-  }>();
+  private apiUrl: string;
+  private timeout: number;
+  private reconnectAttempts = 0;
+  private maxReconnectAttempts = 5;
+  private reconnectDelay = 1000;
+  private pendingExecutions = new Map<string, PendingExecution>();
+  private isConnecting = false;
+  private onConnected: (() => void)[] = [];
+  private onDisconnected: (() => void)[] = [];
 
-  constructor(config: ScalixConfig) {
-    super();
-    this.config = config;
-  }
-
-  get isConnected(): boolean {
-    return this._isConnected;
+  constructor(apiUrl: string, timeout = 30000) {
+    this.apiUrl = apiUrl;
+    this.timeout = timeout;
   }
 
   /**
-   * Connect to the WebSocket server
+   * Connect to WebSocket server
    */
-  connect(): void {
-    if (this.ws) {
-      this.disconnect();
-    }
+  async connect(): Promise<void> {
+    return new Promise((resolve, reject) => {
+      if (this.ws?.readyState === WebSocket.OPEN) {
+        resolve();
+        return;
+      }
 
-    const wsUrl = this.config.apiUrl.replace(/^http/, 'ws');
-    this.ws = new WebSocket(wsUrl);
+      if (this.isConnecting) {
+        // Wait for connection to complete
+        this.onConnected.push(resolve);
+        return;
+      }
 
-    this.ws.on('open', () => {
-      this._isConnected = true;
-      this.emit('connected');
-      this.startPingInterval();
-    });
+      this.isConnecting = true;
 
-    this.ws.on('message', (data: Buffer) => {
       try {
-        const message = JSON.parse(data.toString()) as WSMessage;
-        this.handleMessage(message);
-      } catch {
-        // Ignore malformed messages
+        // Convert http(s) URL to ws(s)
+        const wsUrl = this.apiUrl
+          .replace(/^https?/, 'ws')
+          .replace(/\/$/, '');
+
+        this.ws = new WebSocket(wsUrl);
+
+        this.ws.on('open', () => {
+          this.reconnectAttempts = 0;
+          this.isConnecting = false;
+
+          // Fire all pending callbacks
+          const callbacks = [...this.onConnected];
+          this.onConnected = [];
+          callbacks.forEach((cb) => cb());
+
+          resolve();
+        });
+
+        this.ws.on('message', (data: Buffer) => {
+          try {
+            const message = JSON.parse(data.toString()) as WSMessage;
+            this.handleMessage(message);
+          } catch (error) {
+            console.error('Failed to parse WebSocket message:', error);
+          }
+        });
+
+        this.ws.on('close', () => {
+          this.ws = null;
+          this.isConnecting = false;
+
+          // Fire disconnect callbacks
+          const callbacks = [...this.onDisconnected];
+          this.onDisconnected = [];
+          callbacks.forEach((cb) => cb());
+
+          // Attempt reconnect
+          this.attemptReconnect();
+        });
+
+        this.ws.on('error', (error) => {
+          this.isConnecting = false;
+          console.error('WebSocket error:', error);
+          reject(error);
+        });
+      } catch (error) {
+        this.isConnecting = false;
+        reject(error);
       }
     });
-
-    this.ws.on('close', () => {
-      this._isConnected = false;
-      this.stopPingInterval();
-      this.emit('disconnected');
-      this.scheduleReconnect();
-    });
-
-    this.ws.on('error', (error: Error) => {
-      this.emit('error', error);
-    });
   }
 
   /**
-   * Disconnect from the WebSocket server
+   * Disconnect from WebSocket server
    */
   disconnect(): void {
-    if (this.reconnectTimer) {
-      clearTimeout(this.reconnectTimer);
-      this.reconnectTimer = null;
-    }
-    this.stopPingInterval();
-
     if (this.ws) {
-      this.ws.removeAllListeners();
-      if (this.ws.readyState === WebSocket.OPEN || this.ws.readyState === WebSocket.CONNECTING) {
-        this.ws.close();
-      }
+      this.ws.close();
       this.ws = null;
     }
 
-    this._isConnected = false;
-
-    // Reject all pending executions
-    for (const [requestId, pending] of this.pendingExecutions) {
-      pending.reject(new Error('WebSocket disconnected'));
-    }
+    // Cancel all pending executions
+    this.pendingExecutions.forEach((execution) => {
+      clearTimeout(execution.timeout);
+    });
     this.pendingExecutions.clear();
   }
 
   /**
-   * Execute an agent via WebSocket with streaming progress updates.
-   * Returns a promise that resolves with the final result.
+   * Execute agent with real-time progress streaming
    */
-  executeAgent(
+  async executeWithProgress(
     agentId: string,
     input: string,
-    context?: Record<string, unknown>
-  ): { requestId: string; promise: Promise<AgentResult>; cancel: () => void } {
-    const requestId = this.nextRequestId();
+    onProgress: ProgressCallback,
+    onError: ErrorCallback
+  ): Promise<void> {
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+      onError('Not connected to WebSocket server');
+      return;
+    }
 
-    const promise = new Promise<AgentResult>((resolve, reject) => {
-      if (!this._isConnected || !this.ws) {
-        reject(new Error('WebSocket not connected'));
-        return;
-      }
+    const requestId = this.generateRequestId();
 
-      this.pendingExecutions.set(requestId, { resolve, reject });
+    // Store execution handlers
+    const timeout = setTimeout(() => {
+      this.pendingExecutions.delete(requestId);
+      onError('Execution timeout');
+    }, this.timeout);
 
-      this.send({
-        type: 'execute',
-        requestId,
-        data: { agentId, input, context },
-      });
+    this.pendingExecutions.set(requestId, {
+      requestId,
+      onProgress,
+      onError,
+      timeout,
     });
 
-    const cancel = () => {
-      this.cancelExecution(requestId);
+    // Send execution request
+    const message: WSMessage = {
+      type: 'execute',
+      requestId,
+      data: {
+        agentId,
+        input,
+      },
     };
 
-    return { requestId, promise, cancel };
-  }
+    this.ws.send(JSON.stringify(message));
 
-  /**
-   * Cancel a running execution
-   */
-  cancelExecution(requestId: string): void {
-    this.send({
-      type: 'cancel' as WSMessageType,
-      requestId,
+    // Initial progress
+    onProgress({
+      executionId: requestId,
+      agentId,
+      status: 'started',
+      message: 'Starting execution...',
     });
-
-    const pending = this.pendingExecutions.get(requestId);
-    if (pending) {
-      pending.reject(new Error('Execution cancelled'));
-      this.pendingExecutions.delete(requestId);
-    }
   }
 
   /**
-   * Subscribe to a channel for receiving updates
+   * Subscribe to channel for updates
    */
   subscribe(channel: string): void {
-    this.send({
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+      return;
+    }
+
+    const requestId = this.generateRequestId();
+    const message: WSMessage = {
       type: 'subscribe',
+      requestId,
       data: { channel },
-    });
+    };
+
+    this.ws.send(JSON.stringify(message));
   }
 
   /**
-   * Unsubscribe from a channel
+   * Unsubscribe from channel
    */
   unsubscribe(channel: string): void {
-    this.send({
+    if (!this.ws || this.ws.readyState !== WebSocket.OPEN) {
+      return;
+    }
+
+    const requestId = this.generateRequestId();
+    const message: WSMessage = {
       type: 'unsubscribe',
+      requestId,
       data: { channel },
-    });
+    };
+
+    this.ws.send(JSON.stringify(message));
   }
 
   /**
-   * Update configuration and reconnect if needed
+   * Cancel execution
    */
-  updateConfig(config: ScalixConfig): void {
-    const urlChanged = this.config.apiUrl !== config.apiUrl;
-    this.config = config;
-
-    if (urlChanged && this._isConnected) {
-      this.disconnect();
-      this.connect();
+  cancel(executionId: string): void {
+    const execution = this.pendingExecutions.get(executionId);
+    if (execution) {
+      clearTimeout(execution.timeout);
+      this.pendingExecutions.delete(executionId);
+      execution.onError('Execution cancelled');
     }
   }
 
-  private handleMessage(message: WSMessage): void {
-    switch (message.type) {
-      case 'connected':
-        // Server acknowledged connection
-        break;
+  /**
+   * Check if connected
+   */
+  isConnected(): boolean {
+    return this.ws?.readyState === WebSocket.OPEN;
+  }
 
+  /**
+   * Register connection callback
+   */
+  onConnect(callback: () => void): void {
+    this.onConnected.push(callback);
+  }
+
+  /**
+   * Register disconnection callback
+   */
+  onDisconnect(callback: () => void): void {
+    this.onDisconnected.push(callback);
+  }
+
+  /**
+   * Handle incoming WebSocket message
+   */
+  private handleMessage(message: WSMessage): void {
+    const { requestId, type, data } = message;
+
+    if (!requestId) {
+      return;
+    }
+
+    const execution = this.pendingExecutions.get(requestId);
+    if (!execution) {
+      return;
+    }
+
+    switch (type) {
       case 'execution_started':
-        this.emit('execution_started', {
-          requestId: message.requestId,
-          executionId: message.data?.executionId,
-          agentId: message.data?.agentId,
+        execution.onProgress({
+          executionId: data?.executionId || requestId,
+          agentId: data?.agentId || '',
+          status: 'started',
+          message: 'Execution started',
         });
         break;
 
       case 'execution_progress':
-        this.emit('execution_progress', {
-          requestId: message.requestId,
-          ...message.data,
-        } as ExecutionProgressData);
-        break;
-
-      case 'execution_completed': {
-        const completedData = message.data as ExecutionCompletedData;
-        this.emit('execution_completed', {
-          requestId: message.requestId,
-          ...completedData,
+        execution.onProgress({
+          executionId: data?.executionId || requestId,
+          agentId: data?.agentId || '',
+          status: 'progress',
+          progress: data?.progress,
+          message: data?.message,
         });
-
-        const pending = this.pendingExecutions.get(message.requestId || '');
-        if (pending) {
-          pending.resolve({
-            executionId: completedData.executionId,
-            agentId: completedData.agentId,
-            status: completedData.status as AgentResult['status'],
-            output: completedData.output,
-            duration: completedData.duration,
-            iterations: completedData.iterations,
-            toolCalls: [],
-            cost: completedData.cost || { inputTokens: 0, outputTokens: 0, totalCost: 0 },
-          });
-          this.pendingExecutions.delete(message.requestId || '');
-        }
         break;
-      }
 
-      case 'execution_error': {
-        const errorData = message.data as ExecutionErrorData;
-        this.emit('execution_error', {
-          requestId: message.requestId,
-          ...errorData,
+      case 'execution_completed':
+        clearTimeout(execution.timeout);
+        this.pendingExecutions.delete(requestId);
+        execution.onProgress({
+          executionId: data?.executionId || requestId,
+          agentId: data?.agentId || '',
+          status: 'completed',
+          output: data?.output,
+          duration: data?.duration,
+          iterations: data?.iterations,
+          cost: data?.cost,
         });
-
-        const pendingErr = this.pendingExecutions.get(message.requestId || '');
-        if (pendingErr) {
-          pendingErr.reject(new Error(errorData.error || 'Execution failed'));
-          this.pendingExecutions.delete(message.requestId || '');
-        }
-        break;
-      }
-
-      case 'log':
-        this.emit('log', message.data);
         break;
 
-      case 'pong':
-        // Keep-alive response received
+      case 'execution_error':
+        clearTimeout(execution.timeout);
+        this.pendingExecutions.delete(requestId);
+        execution.onError(data?.error || 'Unknown error');
         break;
 
       case 'error':
-        this.emit('error', new Error(message.error || 'Unknown WebSocket error'));
+        clearTimeout(execution.timeout);
+        this.pendingExecutions.delete(requestId);
+        execution.onError(message.error || 'Unknown error');
         break;
-
-      default:
-        break;
     }
   }
 
-  private send(message: WSMessage): void {
-    if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-      this.ws.send(JSON.stringify({
-        ...message,
-        timestamp: new Date().toISOString(),
-      }));
-    }
-  }
-
-  private nextRequestId(): string {
-    return `req_${++this.requestCounter}_${Date.now()}`;
-  }
-
-  private startPingInterval(): void {
-    this.pingTimer = setInterval(() => {
-      this.send({ type: 'ping' });
-    }, 30000);
-  }
-
-  private stopPingInterval(): void {
-    if (this.pingTimer) {
-      clearInterval(this.pingTimer);
-      this.pingTimer = null;
-    }
-  }
-
-  private scheduleReconnect(): void {
-    if (this.reconnectTimer) {
+  /**
+   * Attempt to reconnect to WebSocket
+   */
+  private attemptReconnect(): void {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      console.error('Max reconnect attempts reached');
       return;
     }
-    this.reconnectTimer = setTimeout(() => {
-      this.reconnectTimer = null;
-      this.connect();
-    }, 5000);
+
+    this.reconnectAttempts++;
+    const delay = this.reconnectDelay * Math.pow(2, this.reconnectAttempts - 1);
+
+    setTimeout(() => {
+      console.log(`Attempting to reconnect (attempt ${this.reconnectAttempts})...`);
+      this.connect().catch((error) => {
+        console.error('Reconnect failed:', error);
+      });
+    }, delay);
   }
 
-  dispose(): void {
-    this.disconnect();
-    this.removeAllListeners();
+  /**
+   * Generate unique request ID
+   */
+  private generateRequestId(): string {
+    return `req_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
+  }
+}
+
+/**
+ * Create and cache WebSocket client
+ */
+let cachedClient: WebSocketClient | null = null;
+
+export function getWebSocketClient(apiUrl: string, timeout = 30000): WebSocketClient {
+  if (!cachedClient) {
+    cachedClient = new WebSocketClient(apiUrl, timeout);
+  }
+  return cachedClient;
+}
+
+export function closeWebSocketClient(): void {
+  if (cachedClient) {
+    cachedClient.disconnect();
+    cachedClient = null;
   }
 }
