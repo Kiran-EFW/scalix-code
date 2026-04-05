@@ -1,14 +1,14 @@
-# Scalix CLAW: Project Summary
+# Scalix Code: Project Summary
 
 **Date**: April 4, 2026  
 **Status**: 🚀 Foundation Phase Complete  
-**Location**: `/Users/kiranravi/Dev/Scalix-ORG/retail/Scalix-CLAW`
+**Location**: `/Users/kiranravi/Dev/Scalix-ORG/retail/Scalix-Scalix Code`
 
 ---
 
-## What is Scalix CLAW?
+## What is Scalix Code?
 
-Scalix CLAW is a **production-ready agent orchestration platform** that enables developers to build, deploy, and manage sophisticated multi-agent AI systems at scale.
+Scalix Code is a **production-ready agent orchestration platform** that enables developers to build, deploy, and manage sophisticated multi-agent AI systems at scale.
 
 **Positioning**: LangChain (framework) + Claude Code (extensibility) + Temporal (orchestration)
 
@@ -129,25 +129,25 @@ Each module has single responsibility:
 
 ## Strategic Advantages
 
-### Why CLAW Beats Claude Code
+### Why Scalix Code Beats Claude Code
 
-| Dimension | Claude Code | CLAW | Winner |
+| Dimension | Claude Code | Scalix Code | Winner |
 |-----------|------------|------|--------|
-| **TAM** | 20M developers | 500M knowledge workers | CLAW (25x) |
-| **Use Case** | Developer tools | Business automation | CLAW (broader) |
-| **Market** | $2B | $50B+ | CLAW (25x) |
-| **Expandability** | Limited to coding | Unlimited domains | CLAW |
-| **Moat** | First-mover | Plugin ecosystem | CLAW (defensible) |
+| **TAM** | 20M developers | 500M knowledge workers | Scalix Code (25x) |
+| **Use Case** | Developer tools | Business automation | Scalix Code (broader) |
+| **Market** | $2B | $50B+ | Scalix Code (25x) |
+| **Expandability** | Limited to coding | Unlimited domains | Scalix Code |
+| **Moat** | First-mover | Plugin ecosystem | Scalix Code (defensible) |
 
-### Why CLAW Beats LangChain
+### Why Scalix Code Beats LangChain
 
-| Aspect | LangChain | CLAW | Winner |
+| Aspect | LangChain | Scalix Code | Winner |
 |--------|-----------|------|--------|
-| **Language** | Python | TypeScript | CLAW (type-safe, faster) |
-| **Production** | Research-focused | Production-ready | CLAW |
-| **Observability** | Add-on | Built-in | CLAW |
-| **Enterprise** | No multi-tenant | Built-in | CLAW |
-| **Plugins** | No marketplace | Ecosystem | CLAW |
+| **Language** | Python | TypeScript | Scalix Code (type-safe, faster) |
+| **Production** | Research-focused | Production-ready | Scalix Code |
+| **Observability** | Add-on | Built-in | Scalix Code |
+| **Enterprise** | No multi-tenant | Built-in | Scalix Code |
+| **Plugins** | No marketplace | Ecosystem | Scalix Code |
 
 ---
 
@@ -236,7 +236,7 @@ Each module has single responsibility:
 
 ### Quick Setup
 ```bash
-cd /Users/kiranravi/Dev/Scalix-ORG/retail/Scalix-CLAW
+cd /Users/kiranravi/Dev/Scalix-ORG/retail/Scalix-Scalix Code
 pnpm install
 pnpm build
 pnpm test
@@ -294,7 +294,7 @@ pnpm test
 
 ## The Opportunity
 
-Scalix CLAW can become the **de facto standard** for:
+Scalix Code can become the **de facto standard** for:
 
 1. **Production agent orchestration** (like Kubernetes for containers)
 2. **Enterprise automation** (replacing RPA tools, Zapier)
@@ -331,7 +331,7 @@ Scalix CLAW can become the **de facto standard** for:
 **TL;DR**: We're not competing with Claude Code. We're building a new category.
 
 - Claude Code = Tool for developers
-- Scalix CLAW = Platform for agents
+- Scalix Code = Platform for agents
 
 **Winner**: The company that owns the agent orchestration platform category.
 
@@ -349,12 +349,12 @@ Scalix CLAW can become the **de facto standard** for:
 
 ---
 
-**The future is agents. Scalix CLAW is the platform to orchestrate them.**
+**The future is agents. Scalix Code is the platform to orchestrate them.**
 
 🚀 *Ready to build.*
 
 ---
 
-Repository: `/Users/kiranravi/Dev/Scalix-ORG/retail/Scalix-CLAW`  
+Repository: `/Users/kiranravi/Dev/Scalix-ORG/retail/Scalix-Scalix Code`  
 Git Commit: `eff5ea3` (Foundation Phase Complete)  
 Status: Ready for Phase 2 Implementation

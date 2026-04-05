@@ -1,12 +1,12 @@
 {
   "name": "@scalix/cli",
   "version": "0.1.0",
-  "description": "Terminal CLI for Scalix CLAW agent platform",
+  "description": "Terminal CLI for Scalix Code agent platform",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",
   "bin": {
-    "claw": "./dist/cli.js"
+    "scalix": "./dist/cli.js"
   },
   "scripts": {
     "dev": "tsx watch src/cli.ts",
@@ -41,6 +41,6 @@
     "agent",
     "orchestration",
     "terminal",
-    "claw"
+    "scalix"
   ]
 }

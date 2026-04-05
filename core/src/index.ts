@@ -1,7 +1,7 @@
 /**
- * Scalix CLAW - Agent Orchestration Platform
+ * Scalix Code - Agent Orchestration Platform
  *
- * This is the main entry point for the CLAW core runtime.
+ * This is the main entry point for the Scalix Code core runtime.
  * It exports all public APIs for building and running agents.
  */
 

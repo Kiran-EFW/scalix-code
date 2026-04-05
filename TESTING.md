@@ -1,4 +1,4 @@
-# Testing Guide - Scalix CLAW
+# Testing Guide - Scalix Code
 
 **Version**: 1.0  
 **Date**: April 5, 2026  
@@ -8,7 +8,7 @@
 
 ## Testing Strategy
 
-Scalix CLAW uses a comprehensive testing pyramid:
+Scalix Code uses a comprehensive testing pyramid:
 
 ```
          /\
@@ -225,7 +225,7 @@ Integration tests verify components working together with real implementations.
 
 ```typescript
 describe('Agent Routes', () => {
-  let platform: CLAWPlatform;
+  let platform: Scalix CodePlatform;
 
   beforeEach(async () => {
     platform = createPlatform();

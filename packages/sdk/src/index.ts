@@ -1,12 +1,12 @@
 /**
- * Scalix CLAW SDK
+ * Scalix Code SDK
  *
- * Public API for developers using Scalix CLAW
+ * Public API for developers using Scalix Code
  */
 
 export * from '@scalix/core';
 export { createClient } from './client';
 export { createAgent } from './agent-builder';
 
-export type { CLAWClient } from './client';
+export type { Scalix CodeClient } from './client';
 export type { AgentBuilder } from './agent-builder';

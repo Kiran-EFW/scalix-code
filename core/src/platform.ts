@@ -1,7 +1,7 @@
 /**
  * Platform Factory
  *
- * Create a complete CLAW platform instance with all dependencies
+ * Create a complete Scalix Code platform instance with all dependencies
  */
 
 import type { Agent, AgentConfig } from './agent/types';
@@ -26,9 +26,9 @@ export interface PlatformConfig {
 }
 
 /**
- * CLAW Platform
+ * Scalix Code Platform
  */
-export class CLAWPlatform {
+export class ScalixPlatform {
   private toolRegistry: ToolRegistryInterface;
   private tracer = new DefaultTracer();
   private logger: DefaultLogger;
@@ -43,7 +43,7 @@ export class CLAWPlatform {
     this.logger = new DefaultLogger(config.debug ? 'debug' : 'info');
     this.toolRegistry = new ToolRegistry();
 
-    this.logger.info('CLAW Platform initialized', {
+    this.logger.info('Scalix Code Platform initialized', {
       debug: config.debug,
       maxAgents: config.maxAgents,
       maxTools: config.maxTools,
@@ -218,6 +218,6 @@ export class CLAWPlatform {
 /**
  * Create a new platform instance
  */
-export function createPlatform(config?: PlatformConfig): CLAWPlatform {
-  return new CLAWPlatform(config);
+export function createPlatform(config?: PlatformConfig): ScalixPlatform {
+  return new ScalixPlatform(config);
 }

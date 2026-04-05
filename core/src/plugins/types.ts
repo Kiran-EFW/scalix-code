@@ -1,7 +1,7 @@
 /**
  * Plugin Types
  *
- * Plugin system for extending CLAW capabilities.
+ * Plugin system for extending Scalix Code capabilities.
  * Plugins can add commands, agents, skills, and hooks.
  */
 

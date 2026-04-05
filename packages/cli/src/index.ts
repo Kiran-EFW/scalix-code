@@ -1,5 +1,5 @@
 /**
- * Scalix CLAW CLI
+ * Scalix Code CLI
  *
  * Exports for embedding the CLI in other applications
  */

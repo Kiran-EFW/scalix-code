@@ -6,7 +6,7 @@
 
 import { WebSocketServer, WebSocket } from 'ws';
 import { Server as HttpServer } from 'http';
-import { CLAWPlatform } from '@scalix/core';
+import { Scalix CodePlatform } from '@scalix/core';
 import { v4 as uuidv4 } from 'uuid';
 
 /**
@@ -41,7 +41,7 @@ export interface WSMessage {
 interface WSConnection {
   id: string;
   ws: WebSocket;
-  platform: CLAWPlatform;
+  platform: Scalix CodePlatform;
   subscriptions: Set<string>; // trace IDs, agent IDs, etc.
 }
 
@@ -50,7 +50,7 @@ interface WSConnection {
  */
 export function attachWebSocketServer(
   httpServer: HttpServer,
-  platform: CLAWPlatform
+  platform: Scalix CodePlatform
 ): WebSocketServer {
   const wss = new WebSocketServer({ server: httpServer });
   const connections = new Map<string, WSConnection>();

@@ -1,5 +1,5 @@
 /**
- * HTTP Client for Scalix CLAW API
+ * HTTP Client for Scalix Code API
  *
  * Provides a typed client for interacting with the REST API
  */
@@ -32,7 +32,7 @@ export interface ExecuteRequest {
   context?: Record<string, any>;
 }
 
-export class CLAWClient {
+export class Scalix CodeClient {
   private baseUrl: string;
   private apiKey?: string;
   private timeout: number;
@@ -179,6 +179,6 @@ export class CLAWClient {
 /**
  * Create a client instance
  */
-export function createClient(config: ClientConfig): CLAWClient {
-  return new CLAWClient(config);
+export function createClient(config: ClientConfig): Scalix CodeClient {
+  return new Scalix CodeClient(config);
 }

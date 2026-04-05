@@ -1,7 +1,7 @@
 /**
  * Shared Zod Schemas
  *
- * Type-safe validation schemas used across CLAW.
+ * Type-safe validation schemas used across Scalix Code.
  * Enables clear contracts between modules.
  */
 

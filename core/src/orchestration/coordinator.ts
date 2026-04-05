@@ -18,64 +18,67 @@ import type {
 export class WorkflowCoordinator implements Coordinator {
   /**
    * Execute a workflow with the given agents
+   * Returns array of execution results (not wrapped in WorkflowExecutionResult)
    */
   async executeWorkflow(
     workflow: Workflow,
-    agents: Agent[]
-  ): Promise<WorkflowExecutionResult> {
-    const startTime = Date.now();
+    agentsMap: Map<string, Agent> | Agent[]
+  ): Promise<ExecutionResult[]> {
+    // Validate workflow structure
+    if (!workflow.pattern) {
+      throw new Error('Workflow must have a pattern');
+    }
+
+    const validPatterns = ['sequential', 'parallel', 'tree', 'reactive', 'mesh'];
+    if (!validPatterns.includes(workflow.pattern)) {
+      throw new Error(`Invalid workflow pattern: ${workflow.pattern}`);
+    }
+
+    // Convert agents array to map if needed
+    const agents = agentsMap instanceof Map
+      ? agentsMap
+      : new Map(agentsMap.map((a) => [a.id, a]));
+
     const stepResults: ExecutionResult[] = [];
-    let error: { stepId: string; agentId: string; message: string } | undefined;
 
     try {
       for (const step of workflow.steps) {
-        const stepAgents = agents.filter((a) =>
-          step.agentIds.includes(a.id)
-        );
-
-        if (stepAgents.length === 0) {
-          throw new Error(`No agents found for step ${step.id}`);
+        // Validate agent IDs exist
+        const agentId = (step as any).agentId || (step as any).agentIds?.[0];
+        if (!agentId) {
+          throw new Error(`Step must have agentId or agentIds`);
         }
 
+        const agent = agents.get(agentId);
+        if (!agent) {
+          throw new Error(`Agent not found: ${agentId}`);
+        }
+
+        const agentsList = [agent];
+        const stepInput = (step as any).input || {};
         let stepResult: ExecutionResult | ExecutionResult[];
 
-        switch (step.pattern) {
+        switch (workflow.pattern) {
           case 'sequential':
-            stepResult = await this.executeSequential(
-              stepAgents,
-              step.inputs || {}
-            );
+            stepResult = await this.executeSequential(agentsList, stepInput);
             break;
           case 'parallel':
-            stepResult = await this.executeParallel(
-              stepAgents,
-              step.inputs || {}
-            );
+            stepResult = await this.executeParallel(agentsList, stepInput);
             break;
           case 'tree':
-            // For tree, assume first agent is parent
-            stepResult = await this.executeTree(
-              stepAgents[0],
-              new Map(),
-              step.inputs || {}
-            );
+            stepResult = await this.executeTree(agent, new Map(), stepInput);
             break;
           case 'reactive':
-            // For reactive, use async generator
             stepResult = await this.executeReactive(
-              stepAgents,
+              agentsList,
               this.emptyAsyncIterable()
             );
             break;
           case 'mesh':
-            // Mesh pattern - full communication
-            stepResult = await this.executeParallel(
-              stepAgents,
-              step.inputs || {}
-            );
+            stepResult = await this.executeParallel(agentsList, stepInput);
             break;
           default:
-            throw new Error(`Unknown pattern: ${step.pattern}`);
+            throw new Error(`Unknown pattern: ${workflow.pattern}`);
         }
 
         // Collect results
@@ -84,39 +87,12 @@ export class WorkflowCoordinator implements Coordinator {
         } else {
           stepResults.push(stepResult);
         }
-
-        // Check for failures
-        const failedResult = stepResults.find((r) => r.status !== 'success');
-        if (failedResult) {
-          error = {
-            stepId: step.id,
-            agentId: failedResult.agentId,
-            message: failedResult.error?.message || 'Unknown error',
-          };
-          break;
-        }
       }
 
-      return {
-        workflowId: workflow.id,
-        status: error ? 'failure' : 'success',
-        stepResults,
-        duration: Date.now() - startTime,
-        error,
-      };
+      return stepResults;
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Unknown error';
-      return {
-        workflowId: workflow.id,
-        status: 'failure',
-        stepResults,
-        duration: Date.now() - startTime,
-        error: {
-          stepId: workflow.steps[0]?.id || 'unknown',
-          agentId: agents[0]?.id || 'unknown',
-          message,
-        },
-      };
+      throw err; // Re-throw validation errors
     }
   }
 

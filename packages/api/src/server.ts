@@ -6,7 +6,7 @@
 
 import express, { Express, Request, Response, NextFunction } from 'express';
 import { createServer as createHttpServer, Server as HttpServer } from 'http';
-import { CLAWPlatform } from '@scalix/core';
+import { Scalix CodePlatform } from '@scalix/core';
 import type { Agent, ExecutionResult } from '@scalix/core';
 import { v4 as uuidv4 } from 'uuid';
 import {
@@ -33,7 +33,7 @@ export interface ServerConfig {
  * API Context - attached to request
  */
 export interface ApiContext {
-  platform: CLAWPlatform;
+  platform: Scalix CodePlatform;
   requestId: string;
   startTime: number;
 }
@@ -53,7 +53,7 @@ declare global {
  * Create and configure Express server
  */
 export function createServer(
-  platform: CLAWPlatform,
+  platform: Scalix CodePlatform,
   config: ServerConfig
 ): Express {
   const app = express();
@@ -122,7 +122,7 @@ export function createServer(
  * Start server with HTTP and WebSocket support
  */
 export async function startServer(
-  platform: CLAWPlatform,
+  platform: Scalix CodePlatform,
   config: ServerConfig
 ): Promise<{
   app: Express;

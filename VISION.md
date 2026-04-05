@@ -1,4 +1,4 @@
-# SCALIX CLAW: Agent Orchestration Platform
+# SCALIX Scalix Code: Agent Orchestration Platform
 
 **Version**: 0.1.0 (Foundation Phase)  
 **Status**: Active Development  
@@ -8,7 +8,7 @@
 
 ## EXECUTIVE SUMMARY
 
-**Scalix CLAW** is an open-source, production-ready **agent orchestration platform** that enables developers and enterprises to build, deploy, and manage sophisticated multi-agent AI systems at scale.
+**Scalix Code** is an open-source, production-ready **agent orchestration platform** that enables developers and enterprises to build, deploy, and manage sophisticated multi-agent AI systems at scale.
 
 Think of it as:
 - **LangChain** (agent framework) + **Claude Code** (extensibility) + **Temporal** (workflow orchestration)
@@ -25,13 +25,13 @@ Think of it as:
 - **Enterprise demand**: "How do we run agents in production?" becomes top question
 - **TAM**: $50B+ enterprise automation infrastructure
 
-### The CLAW Thesis
+### The Scalix Code Thesis
 1. Agents are the future of work (1-2 year inflection)
 2. Enterprises need a standard platform to run agents safely, reliably, at scale
 3. Open-source + hosted + enterprise editions = network effects + revenue
 4. Own the platform → own the ecosystem → own the category
 
-### Why Scalix CLAW Will Win
+### Why Scalix Code Will Win
 - **Production-first**: Built for real workloads, not research
 - **AI-native**: Agents as first-class citizens (not bolted-on)
 - **Multi-model**: Works with Claude, GPT, Gemini, local models
@@ -89,11 +89,11 @@ Plugin system and marketplace for agents, integrations, skills.
 
 ---
 
-## SCALIX CLAW IN CONTEXT
+## SCALIX Scalix Code IN CONTEXT
 
 ### Against Competitors
 
-| Aspect | CLAW | LangChain | AutoGen | Crew AI |
+| Aspect | Scalix Code | LangChain | AutoGen | Crew AI |
 |--------|------|-----------|---------|---------|
 | **Production Focus** | ✅✅✅ | ✅ | ✅ | ✅ |
 | **Observability** | ✅✅✅ (built-in) | ❌ (need APM) | ❌ | ❌ |
@@ -601,7 +601,7 @@ function calculateCost(agent: Agent): number {
 
 ## AI CODING INSTRUCTIONS
 
-When coding Scalix CLAW, follow these rules:
+When coding Scalix Code, follow these rules:
 
 1. **Always use TypeScript** - No JavaScript files
 2. **Always export interfaces** - Every module exports its public API
@@ -644,7 +644,7 @@ When coding Scalix CLAW, follow these rules:
 - ✅ 1000+ email users
 - ✅ Email vertical dominance
 - ✅ Email marketplace with 50+ templates
-- ✅ First vertical competitors acknowledge CLAW
+- ✅ First vertical competitors acknowledge Scalix Code
 
 ### Phase 5 (Scale) - Months 13+
 - ✅ $5M+ ARR
@@ -655,9 +655,9 @@ When coding Scalix CLAW, follow these rules:
 
 ---
 
-## THE CLAW DIFFERENCE
+## THE Scalix Code DIFFERENCE
 
-**Why Scalix CLAW beats competitors**:
+**Why Scalix Code beats competitors**:
 
 1. **Production-first**: Built for real workloads (not research)
 2. **Type-safe**: TypeScript prevents entire classes of bugs
@@ -669,7 +669,7 @@ When coding Scalix CLAW, follow these rules:
 8. **Scalable**: Designed for thousands of concurrent agents
 
 **The Vision**: 
-> *Scalix CLAW becomes the de facto standard for production agent orchestration, trusted by Fortune 500 companies to automate critical business processes.*
+> *Scalix Code becomes the de facto standard for production agent orchestration, trusted by Fortune 500 companies to automate critical business processes.*
 
 ---
 
@@ -683,6 +683,6 @@ Next steps:
 
 ---
 
-**Scalix CLAW: The future of agent orchestration.**
+**Scalix Code: The future of agent orchestration.**
 
 *Built with ❤️ for developers who want production-grade agent automation.*

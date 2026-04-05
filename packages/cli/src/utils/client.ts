@@ -2,7 +2,7 @@
  * API Client Utilities
  */
 
-import { createClient, CLAWClient } from '@scalix/sdk';
+import { createClient, Scalix CodeClient } from '@scalix/sdk';
 
 export interface ClientConfig {
   host: string;
@@ -10,10 +10,10 @@ export interface ClientConfig {
   debug?: boolean;
 }
 
-let cachedClient: CLAWClient | null = null;
+let cachedClient: Scalix CodeClient | null = null;
 let cachedConfig: ClientConfig | null = null;
 
-export function getClient(config: ClientConfig): CLAWClient {
+export function getClient(config: ClientConfig): Scalix CodeClient {
   // Return cached client if config hasn't changed
   if (cachedClient && JSON.stringify(cachedConfig) === JSON.stringify(config)) {
     return cachedClient;

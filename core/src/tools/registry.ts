@@ -21,8 +21,8 @@ export class ToolRegistry implements ToolRegistryInterface {
   /**
    * Register a tool
    */
-  async register(tool: Tool): Promise<void> {
-    if (this.tools.has(tool.name)) {
+  register(tool: Partial<Tool>): void {
+    if (this.tools.has(tool.name as string)) {
       throw new Error(`Tool already registered: ${tool.name}`);
     }
 
@@ -34,7 +34,9 @@ export class ToolRegistry implements ToolRegistryInterface {
       throw new Error('Tool description is required and must be a string');
     }
 
-    if (!Array.isArray(tool.parameters)) {
+    // Make parameters optional - default to empty array
+    const parameters = tool.parameters || [];
+    if (!Array.isArray(parameters)) {
       throw new Error('Tool parameters must be an array');
     }
 
@@ -42,12 +44,22 @@ export class ToolRegistry implements ToolRegistryInterface {
       throw new Error('Tool execute must be a function');
     }
 
-    this.tools.set(tool.name, tool);
+    // Ensure tool has all required properties
+    const completeTool: Tool = {
+      name: tool.name,
+      description: tool.description,
+      parameters: parameters as any[],
+      execute: tool.execute as any,
+      timeout: tool.timeout,
+      rateLimit: tool.rateLimit,
+    };
+
+    this.tools.set(tool.name, completeTool);
 
     // Register rate limit if specified
-    if (tool.rateLimit) {
+    if (completeTool.rateLimit) {
       this.dispatcher.setRateLimit(
-        tool.name,
+        completeTool.name,
         tool.rateLimit.maxCalls,
         tool.rateLimit.windowMs
       );

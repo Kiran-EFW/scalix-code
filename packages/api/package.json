@@ -1,7 +1,7 @@
 {
   "name": "@scalix/api",
   "version": "0.1.0",
-  "description": "Scalix CLAW REST API server",
+  "description": "Scalix Code REST API server",
   "license": "MIT",
   "type": "module",
   "main": "./dist/index.js",

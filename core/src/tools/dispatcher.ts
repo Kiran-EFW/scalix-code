@@ -85,14 +85,14 @@ class InputValidator {
     // Check length
     if (inputStr.length > this.maxInputLength) {
       throw new Error(
-        `Input too large: ${inputStr.length} > ${this.maxInputLength}`
+        `Input is too long: ${inputStr.length} > ${this.maxInputLength}`
       );
     }
 
     // Check for blocked patterns
     for (const pattern of this.blockedPatterns) {
       if (pattern.test(inputStr)) {
-        throw new Error(`Blocked pattern detected in input for ${toolName}`);
+        throw new Error(`Input contains blocked pattern for ${toolName}`);
       }
     }
 
@@ -106,8 +106,11 @@ class InputValidator {
 export class ToolDispatcher {
   private rateLimiter = new RateLimiter();
   private validator = new InputValidator();
+  private registry: ToolRegistry;
 
-  constructor(private registry: ToolRegistry) {}
+  constructor(registryOrUndefined?: ToolRegistry) {
+    this.registry = registryOrUndefined || ({} as ToolRegistry);
+  }
 
   /**
    * Dispatch a tool call
@@ -198,5 +201,67 @@ export class ToolDispatcher {
     return {
       remaining: this.rateLimiter.getRemaining(toolName),
     };
+  }
+
+  /**
+   * Set the tool registry
+   */
+  setRegistry(registry: ToolRegistry): void {
+    this.registry = registry;
+  }
+
+  /**
+   * Execute a tool by name with arguments
+   */
+  async execute(
+    toolName: string,
+    args: Record<string, unknown>,
+    options?: { timeout?: number }
+  ): Promise<{ success: boolean; result?: unknown; error?: string }> {
+    try {
+      // Validate input
+      this.validator.validate(toolName, args);
+
+      // Check rate limit
+      if (!this.rateLimiter.isAllowed(toolName)) {
+        return {
+          success: false,
+          error: `Rate limit exceeded for ${toolName}`,
+        };
+      }
+
+      // Get tool from registry
+      const tool = this.registry?.get?.(toolName);
+      if (!tool) {
+        return {
+          success: false,
+          error: `Tool not found: ${toolName}`,
+        };
+      }
+
+      // Execute tool with timeout
+      const timeout = options?.timeout ?? tool.timeout ?? 30000;
+      const result = await Promise.race([
+        tool.execute(args),
+        new Promise((_, reject) =>
+          setTimeout(
+            () => reject(new Error(`timeout`)),
+            timeout
+          )
+        ),
+      ]);
+
+      return {
+        success: true,
+        result,
+      };
+    } catch (error) {
+      const message =
+        error instanceof Error ? error.message : 'Unknown error';
+      return {
+        success: false,
+        error: message,
+      };
+    }
   }
 }

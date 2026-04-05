@@ -1,5 +1,5 @@
 /**
- * Scalix CLAW Testing Library
+ * Scalix Code Testing Library
  *
  * Fixtures, mocks, and utilities for testing
  */

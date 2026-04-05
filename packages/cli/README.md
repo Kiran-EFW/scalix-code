@@ -1,6 +1,6 @@
-# Scalix CLAW CLI
+# Scalix Code CLI
 
-Terminal client for the Scalix CLAW agent orchestration platform.
+Terminal client for the Scalix Code agent orchestration platform.
 
 ## Installation
 
@@ -145,16 +145,16 @@ claw exec history analyzer
 ### Environment Variables
 
 ```bash
-CLAW_HOST=api.example.com    # API server host
-CLAW_PORT=8080               # API server port
-CLAW_DEBUG=true              # Enable debug logging
+Scalix Code_HOST=api.example.com    # API server host
+Scalix Code_PORT=8080               # API server port
+Scalix Code_DEBUG=true              # Enable debug logging
 ```
 
 Example:
 
 ```bash
-export CLAW_HOST=localhost
-export CLAW_PORT=3000
+export Scalix Code_HOST=localhost
+export Scalix Code_PORT=3000
 claw stats
 ```
 

@@ -1,7 +1,7 @@
 {
   "name": "@scalix/testing",
   "version": "0.1.0",
-  "description": "Testing utilities and fixtures for Scalix CLAW",
+  "description": "Testing utilities and fixtures for Scalix Code",
   "license": "MIT",
   "type": "module",
   "exports": {

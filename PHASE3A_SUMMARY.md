@@ -113,7 +113,7 @@ HTTP Client                    WebSocket Client
 │  • Event propagation                        │
 └─────────────────────────────────────────────┘
          ↓
-    Scalix CLAW Core Platform
+    Scalix Code Core Platform
     (Phase 2: Agent Executor, Orchestration, Observability)
 ```
 
@@ -209,7 +209,7 @@ GET    /ready   Readiness check
 
 ```bash
 # Install dependencies
-cd /Users/kiranravi/Dev/Scalix-ORG/retail/Scalix-CLAW
+cd /Users/kiranravi/Dev/Scalix-ORG/retail/Scalix-Scalix Code
 pnpm install
 
 # Build all packages

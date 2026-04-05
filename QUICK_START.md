@@ -1,6 +1,6 @@
-# Scalix CLAW Quick Start Guide
+# Scalix Code Quick Start Guide
 
-**Get up and running with Scalix CLAW in 5 minutes**
+**Get up and running with Scalix Code in 5 minutes**
 
 ## Prerequisites
 
@@ -346,7 +346,7 @@ pnpm docker:up      # Try again
 2. **Explore the Architecture**: Deep dive into system design
    - `cat docs/ARCHITECTURE.md`
 
-3. **Write Your First Plugin**: Extend CLAW
+3. **Write Your First Plugin**: Extend Scalix Code
    - Follow `docs/PLUGINS.md`
 
 4. **Deploy Locally**: Run the full stack
@@ -365,4 +365,4 @@ pnpm docker:up      # Try again
 
 ---
 
-**Happy building with Scalix CLAW! 🚀**
+**Happy building with Scalix Code! 🚀**

@@ -1,4 +1,4 @@
-# Scalix CLAW - Brand Identity Guidelines
+# Scalix Code - Brand Identity Guidelines
 
 **Version**: 1.0  
 **Date**: April 5, 2026  
@@ -8,7 +8,7 @@
 
 ## Brand Overview
 
-**Scalix CLAW** is the production-ready agent orchestration platform from Scalix. It embodies:
+**Scalix Code** is the production-ready agent orchestration platform from Scalix. It embodies:
 
 - **C**ontrol - Full agent lifecycle management
 - **L**arge-scale - Multi-agent coordination
@@ -25,7 +25,7 @@
 ╔═══════════════════════════════════════════╗
 ║                                           ║
 ║      ╔═══════════════════════════════╗    ║
-║      ║   🚀 SCALIX CLAW 🚀          ║    ║
+║      ║   🚀 SCALIX Scalix Code 🚀          ║    ║
 ║      ║  Agent Orchestration Platform ║    ║
 ║      ╚═══════════════════════════════╝    ║
 ║                                           ║
@@ -98,8 +98,8 @@ Grayscale:
 ## Naming Conventions
 
 ### Product Names
-- **Full Name**: "Scalix CLAW" (with space)
-- **Short Form**: "CLAW"
+- **Full Name**: "Scalix Code" (with space)
+- **Short Form**: "Scalix Code"
 - **Never**: "claw" (lowercase), "C.L.A.W." (periods), "ClAW"
 
 ### Component Names
@@ -153,13 +153,13 @@ Grayscale:
 - Use the primary ASCII logo in terminal applications
 - Use on white or light backgrounds (for digital)
 - Maintain clear space around the logo (minimum 20px padding)
-- Use full brand name "Scalix CLAW" with logo
+- Use full brand name "Scalix Code" with logo
 - Use appropriate color variants for backgrounds
 
 ### Don'ts ❌
 - Don't distort or stretch the logo
 - Don't change the colors without approval
-- Don't remove the CLAW acronym explanation
+- Don't remove the Scalix Code acronym explanation
 - Don't use pixelated or low-resolution versions
 - Don't combine with competing logos
 
@@ -170,7 +170,7 @@ Grayscale:
 ### Welcome Message
 ```
 ╔════════════════════════════════════════════╗
-║  SCALIX CLAW - Agent Orchestration       ║
+║  SCALIX Scalix Code - Agent Orchestration       ║
 ║  Production-Ready Platform for Agents    ║
 ╚════════════════════════════════════════════╝
 ```
@@ -236,7 +236,7 @@ All documentation files should include:
 
 **Status**: [Development Status]  
 **Last Updated**: [Date]  
-**Maintainer**: Scalix CLAW Team
+**Maintainer**: Scalix Code Team
 
 ---
 ```
@@ -261,11 +261,11 @@ Mark code as `typescript` or `bash` for syntax highlighting.
 ### Handle Format
 - **GitHub**: @scalix/claw
 - **NPM**: @scalix/claw
-- **Twitter**: @ScalixCLAW
+- **Twitter**: @ScalixScalix Code
 - **Domain**: claw.scalix.dev
 
 ### Hashtags
-- #ScalixCLAW
+- #ScalixScalix Code
 - #AgentOrchestration
 - #MultiAgent
 - #TypeScript
@@ -304,7 +304,7 @@ Mark code as `typescript` or `bash` for syntax highlighting.
 
 ## Brand Approval & Changes
 
-### Who Can Use CLAW Brand
+### Who Can Use Scalix Code Brand
 - Scalix team and contributors
 - Community projects (with attribution)
 - Integrations and plugins (with permission)
@@ -327,7 +327,7 @@ For brand-related questions:
 
 ---
 
-**Scalix CLAW Brand Guidelines**  
+**Scalix Code Brand Guidelines**  
 "Production-ready agent orchestration, engineered with precision."
 
 Last updated: April 5, 2026

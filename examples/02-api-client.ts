@@ -1,13 +1,13 @@
 /**
  * API Client Example
  *
- * Shows how to use the HTTP client to interact with the CLAW API
+ * Shows how to use the HTTP client to interact with the Scalix Code API
  */
 
 import { createClient } from '@scalix/sdk';
 
 async function main() {
-  console.log('🚀 Scalix CLAW - API Client Example\n');
+  console.log('🚀 Scalix Code - API Client Example\n');
 
   // Create client pointing to API server
   const client = createClient({

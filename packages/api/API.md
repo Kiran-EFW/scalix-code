@@ -1,4 +1,4 @@
-# Scalix CLAW REST API
+# Scalix Code REST API
 
 Complete REST API for agent orchestration with real-time WebSocket streaming.
 

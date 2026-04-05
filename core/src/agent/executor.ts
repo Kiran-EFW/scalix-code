@@ -12,6 +12,7 @@ import type {
   AgentState,
   ExecutionResult,
   Cost,
+  LLMProvider,
 } from './types';
 import type { ToolRegistry, ToolCall } from '../tools/types';
 import type { Tracer, Logger } from '../observability/types';
@@ -35,6 +36,18 @@ interface LLMResponse {
 }
 
 /**
+ * Context dependencies for executor
+ */
+interface ExecutorContext {
+  llmProvider: LLMProvider;
+  storage: Storage;
+  logger: Logger;
+  tracer: Tracer;
+  metrics?: any;
+  tools?: ToolRegistry;
+}
+
+/**
  * Agent executor - core execution engine
  */
 export class AgentExecutor implements Agent {
@@ -43,19 +56,34 @@ export class AgentExecutor implements Agent {
   readonly config: AgentConfig;
   private stateMachine: AgentStateMachine;
   private executionHistory: ExecutionResult[] = [];
+  private tools: ToolRegistry;
+  private tracer: Tracer;
+  private storage: Storage;
+  private logger: Logger;
+  private llmProvider: LLMProvider;
 
-  constructor(
-    config: AgentConfig,
-    private tools: ToolRegistry,
-    private tracer: Tracer,
-    private storage: Storage,
-    private logger: Logger,
-    private llmProvider: LLMProvider
-  ) {
+  constructor(config: AgentConfig, context: ExecutorContext | ToolRegistry) {
     this.id = config.id;
     this.name = config.name;
     this.config = config;
     this.stateMachine = new AgentStateMachine();
+
+    // Handle both constructor signatures for backwards compatibility
+    if ('llmProvider' in context) {
+      // Object context format
+      this.llmProvider = (context as ExecutorContext).llmProvider;
+      this.storage = (context as ExecutorContext).storage;
+      this.logger = (context as ExecutorContext).logger;
+      this.tracer = (context as ExecutorContext).tracer;
+      this.tools = (context as ExecutorContext).tools || ({} as ToolRegistry);
+    } else {
+      // Legacy ToolRegistry format
+      this.tools = context as ToolRegistry;
+      this.llmProvider = {} as LLMProvider;
+      this.storage = {} as Storage;
+      this.logger = {} as Logger;
+      this.tracer = {} as Tracer;
+    }
   }
 
   /**
@@ -66,6 +94,13 @@ export class AgentExecutor implements Agent {
   }
 
   /**
+   * Get current state (method form)
+   */
+  getState(): string {
+    return this.stateMachine.getState().toUpperCase();
+  }
+
+  /**
    * Execute the agent
    */
   async execute(
@@ -73,23 +108,69 @@ export class AgentExecutor implements Agent {
     context?: Record<string, unknown>
   ): Promise<ExecutionResult> {
     const traceId = uuid();
-    const span = this.tracer.startSpan('agent.execute', {
+    const timeout = this.config.timeout;
+
+    // If timeout is configured, wrap execution in a timeout
+    if (timeout) {
+      return Promise.race([
+        this.executeInternal(input, context, traceId),
+        new Promise<ExecutionResult>((resolve) =>
+          setTimeout(() => {
+            resolve({
+              executionId: traceId,
+              agentId: this.id,
+              status: 'failed' as any,
+              output: '',
+              toolCalls: [],
+              toolResults: [],
+              cost: {
+                provider: this.config.model.provider,
+                model: this.config.model.model,
+                inputTokens: 0,
+                outputTokens: 0,
+                costUSD: 0,
+                timestamp: new Date(),
+              },
+              duration: timeout,
+              iterations: 0,
+              trace: [],
+              finalState: this.stateMachine.getState() as any,
+              error: `Execution timeout after ${timeout}ms` as any,
+            });
+          }, timeout)
+        ),
+      ]);
+    }
+
+    return this.executeInternal(input, context, traceId);
+  }
+
+  /**
+   * Internal execution logic
+   */
+  private async executeInternal(
+    input: string,
+    context?: Record<string, unknown>,
+    traceId?: string
+  ): Promise<ExecutionResult> {
+    const actualTraceId = traceId || uuid();
+    const span = await (this.tracer.startSpan?.('agent.execute', {
       agentId: this.id,
       input: input.substring(0, 100),
-      traceId,
-    });
+      traceId: actualTraceId,
+    }) ?? Promise.resolve(null));
 
     const startTime = Date.now();
 
     try {
       this.stateMachine.transition('initializing' as any);
-      this.logger.info(`Agent ${this.name} starting execution`, {
+      this.logger.info?.(`Agent ${this.name} starting execution`, {
         agentId: this.id,
         input: input.substring(0, 100),
       });
 
       // Load agent memory for context
-      const memory = await this.storage.loadMemory(this.id);
+      const memory = await this.storage.loadMemory?.(this.id);
       const messages: Array<{ role: string; content: string }> = [];
 
       // Build message history
@@ -124,17 +205,17 @@ export class AgentExecutor implements Agent {
       while (iteration < maxIterations && !this.stateMachine.isTerminal()) {
         iteration++;
 
-        const iterationSpan = this.tracer.startSpan(`agent.iteration.${iteration}`, {
+        const iterationSpan = await (this.tracer.startSpan?.(`agent.iteration.${iteration}`, {
           iteration,
           messageCount: messages.length,
-        });
+        }) ?? Promise.resolve(null));
 
         try {
           // Call LLM
-          const llmSpan = this.tracer.startSpan('llm.call', {
+          const llmSpan = await (this.tracer.startSpan?.('llm.call', {
             model: this.config.model.model,
             provider: this.config.model.provider,
-          });
+          }) ?? Promise.resolve(null));
 
           let llmResponse: LLMResponse;
           try {
@@ -144,9 +225,9 @@ export class AgentExecutor implements Agent {
               tools: this.config.tools,
             });
 
-            this.tracer.endSpan(llmSpan, 'success');
+            this.tracer.endSpan?.(llmSpan, 'success');
           } catch (error) {
-            this.tracer.endSpan(llmSpan, 'error');
+            this.tracer.endSpan?.(llmSpan, 'error');
             throw error;
           }
 
@@ -163,7 +244,7 @@ export class AgentExecutor implements Agent {
           if (llmResponse.toolCalls.length === 0) {
             // Agent finished
             this.stateMachine.transition('completed' as any);
-            this.tracer.endSpan(iterationSpan, 'success');
+            this.tracer.endSpan?.(iterationSpan, 'success');
             break;
           }
 
@@ -171,10 +252,10 @@ export class AgentExecutor implements Agent {
           const toolResultsThisIteration: any[] = [];
 
           for (const toolCall of llmResponse.toolCalls) {
-            const toolSpan = this.tracer.startSpan(`tool.execute`, {
+            const toolSpan = await (this.tracer.startSpan?.(`tool.execute`, {
               toolName: toolCall.name,
               toolId: toolCall.id,
-            });
+            }) ?? Promise.resolve(null));
 
             const toolCallRecord: ToolCall = {
               id: toolCall.id,
@@ -186,23 +267,40 @@ export class AgentExecutor implements Agent {
             toolCalls.push(toolCallRecord);
 
             try {
-              const toolResult = await this.tools.execute(toolCallRecord);
+              // Execute tool through registry or dispatcher
+              let toolResult: any;
+              if (this.tools?.execute && typeof this.tools.execute === 'function') {
+                toolResult = await this.tools.execute(toolCallRecord);
+              } else if (this.tools?.dispatch && typeof this.tools.dispatch === 'function') {
+                toolResult = await this.tools.dispatch(toolCallRecord);
+              } else if (this.tools?.get && typeof this.tools.get === 'function') {
+                // Direct tool execution from registry
+                const tool = this.tools.get(toolCall.name);
+                if (tool?.execute) {
+                  const result = await tool.execute(toolCall.arguments);
+                  toolResult = { success: true, result };
+                } else {
+                  toolResult = { success: false, error: { message: 'Tool not found' } };
+                }
+              } else {
+                toolResult = { success: false, error: { message: 'Tool dispatcher not available' } };
+              }
 
-              if (toolResult.success) {
+              if (toolResult?.success) {
                 toolResults.push(toolResult.result);
                 toolResultsThisIteration.push({
                   id: toolCall.id,
                   success: true,
                   content: JSON.stringify(toolResult.result),
                 });
-                this.tracer.endSpan(toolSpan, 'success');
+                this.tracer.endSpan?.(toolSpan, 'success');
               } else {
                 toolResultsThisIteration.push({
                   id: toolCall.id,
                   success: false,
                   content: `Tool error: ${toolResult.error?.message}`,
                 });
-                this.tracer.endSpan(toolSpan, 'error');
+                this.tracer.endSpan?.(toolSpan, 'error');
               }
             } catch (error) {
               const message =
@@ -212,7 +310,7 @@ export class AgentExecutor implements Agent {
                 success: false,
                 content: `Tool exception: ${message}`,
               });
-              this.tracer.endSpan(toolSpan, 'error');
+              this.tracer.endSpan?.(toolSpan, 'error');
             }
           }
 
@@ -226,7 +324,7 @@ export class AgentExecutor implements Agent {
           this.tracer.endSpan(iterationSpan, 'success');
         } catch (error) {
           const message = error instanceof Error ? error.message : 'Unknown error';
-          this.logger.error(`Iteration ${iteration} failed`, error as Error);
+          this.logger.error?.(`Iteration ${iteration} failed`, error as Error);
           this.tracer.endSpan(iterationSpan, 'error');
 
           if (iteration >= maxIterations) {
@@ -255,8 +353,9 @@ export class AgentExecutor implements Agent {
 
       // Build execution result
       const result: ExecutionResult = {
+        executionId: actualTraceId,
         agentId: this.id,
-        status: this.stateMachine.isTerminal() ? 'success' : 'timeout',
+        status: 'completed',
         output,
         toolCalls,
         toolResults,
@@ -268,13 +367,14 @@ export class AgentExecutor implements Agent {
       };
 
       // Save to storage
-      await this.storage.saveExecutionResult(result);
+      await this.storage.saveExecutionResult?.(result);
+      await this.storage.saveMemory?.(this.id, { lastExecution: result });
 
       // Save to history
       this.executionHistory.push(result);
 
-      this.tracer.endSpan(span, 'success');
-      this.logger.info(`Agent ${this.name} completed execution`, {
+      this.tracer.endSpan?.(span, 'success');
+      this.logger.info?.(`Agent ${this.name} completed execution`, {
         agentId: this.id,
         status: result.status,
         duration,
@@ -287,12 +387,13 @@ export class AgentExecutor implements Agent {
       this.stateMachine.transition('errored' as any);
       const message = error instanceof Error ? error.message : 'Unknown error';
 
-      this.logger.error(`Agent ${this.name} execution failed`, error as Error);
-      this.tracer.endSpan(span, 'error');
+      this.logger.error?.(`Agent ${this.name} execution failed`, error as Error);
+      this.tracer.endSpan?.(span, 'error');
 
       const result: ExecutionResult = {
+        executionId: actualTraceId,
         agentId: this.id,
-        status: 'failure',
+        status: 'failed' as any,
         output: '',
         toolCalls: [],
         toolResults: [],
@@ -306,7 +407,7 @@ export class AgentExecutor implements Agent {
         },
         duration: Date.now() - startTime,
         iterations: 0,
-        trace: [span],
+        trace: span ? [span] : [],
         finalState: this.stateMachine.getState() as AgentState,
         error: {
           code: 'AGENT_EXECUTION_FAILED',

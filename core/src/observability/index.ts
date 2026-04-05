@@ -2,7 +2,7 @@
  * Observability Module
  *
  * Production-grade tracing, metrics, and logging.
- * Built-in observability is a core pillar of CLAW.
+ * Built-in observability is a core pillar of Scalix Code.
  */
 
 export * from './types';

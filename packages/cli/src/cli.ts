@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Scalix CLAW CLI
+ * Scalix Code CLI
  *
  * Terminal client for agent orchestration
  */
@@ -17,8 +17,8 @@ import { repl } from './repl';
 const program = new Command();
 
 program
-  .name('claw')
-  .description('Scalix CLAW - Agent Orchestration Platform CLI')
+  .name('scalix')
+  .description('Scalix Code - Agent Orchestration Platform CLI')
   .version(version)
   .option('-H, --host <host>', 'API server host', 'localhost')
   .option('-p, --port <port>', 'API server port', '3000')

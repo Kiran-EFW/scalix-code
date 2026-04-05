@@ -182,7 +182,7 @@ COMPLETED/ERRORED/CANCELLED → IDLE
 ### 10. Platform Factory ✅
 **File**: `core/src/platform.ts`
 
-- **CLAWPlatform class**: Complete platform instance
+- **Scalix CodePlatform class**: Complete platform instance
 - **Agent management**: Create, list, delete agents
 - **Component access**: Get tracer, logger, storage, etc.
 - **Health checks**: Platform health and statistics
@@ -425,7 +425,7 @@ The implementation is ready for:
 
 ---
 
-**Scalix CLAW Core: Production Ready** 🚀
+**Scalix Code Core: Production Ready** 🚀
 
 Commit: `97cb919`  
 Files: 16 created, 3,240 lines of code  

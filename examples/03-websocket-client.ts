@@ -7,7 +7,7 @@
 import WebSocket from 'ws';
 
 async function main() {
-  console.log('🚀 Scalix CLAW - WebSocket Client Example\n');
+  console.log('🚀 Scalix Code - WebSocket Client Example\n');
 
   const ws = new WebSocket('ws://localhost:3000');
   let connected = false;

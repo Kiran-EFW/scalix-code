@@ -1,19 +1,19 @@
 /**
- * Scalix CLAW Logo & Branding
+ * Scalix Code Logo & Branding
  *
- * ASCII art and text representations of the Scalix CLAW brand
+ * ASCII art and text representations of the Scalix Code brand
  */
 
 import chalk from 'chalk';
 
 /**
- * Main CLAW ASCII logo (agent/orchestration themed)
+ * Main Scalix Code ASCII logo (agent/orchestration themed)
  */
 export const asciiLogo = `
 ╔═══════════════════════════════════════════╗
 ║                                           ║
 ║      ╔═══════════════════════════════╗    ║
-║      ║   🚀 SCALIX CLAW 🚀          ║    ║
+║      ║   🚀 SCALIX CODE 🚀          ║    ║
 ║      ║  Agent Orchestration Platform ║    ║
 ║      ╚═══════════════════════════════╝    ║
 ║                                           ║
@@ -29,7 +29,7 @@ export const asciiLogo = `
 `;
 
 /**
- * Compact CLAW ASCII logo (for headers)
+ * Compact Scalix Code ASCII logo (for headers)
  */
 export const compactLogo = `
     _____ _____    _    _    _
@@ -43,23 +43,23 @@ export const compactLogo = `
 `;
 
 /**
- * Minimal CLAW brand text
+ * Minimal Scalix Code brand text
  */
 export const minimalLogo = `
-  🚀 SCALIX CLAW 🚀
+  🚀 SCALIX CODE 🚀
   Agent Orchestration Platform
 `;
 
 /**
- * CLAW constellation logo (inspired by Scalix World spiral)
+ * Scalix Code constellation logo (inspired by Scalix World spiral)
  */
 export const constellationLogo = `
            ◇
           ◇ ◇
          ◇   ◇
         ◇  ◇  ◇
-       ◇   C   ◇
-      ◇   L A W  ◇
+       ◇   S   ◇
+      ◇   C O D E  ◇
        ◇   ◇   ◇
         ◇ ◇ ◇ ◇
          ◇ ◇ ◇
@@ -94,7 +94,7 @@ export function styledBanner(): void {
  * Get colored brand text
  */
 export function brandText(text: string): string {
-  return chalk.bold.cyan('SCALIX') + ' ' + chalk.bold.blue('CLAW');
+  return chalk.bold.cyan('SCALIX') + ' ' + chalk.bold.blue('CODE');
 }
 
 /**
@@ -103,7 +103,7 @@ export function brandText(text: string): string {
 export function printWelcome(): void {
   console.log();
   console.log(chalk.bold.cyan('╔════════════════════════════════════════════╗'));
-  console.log(chalk.bold.cyan('║') + chalk.bold.white('  SCALIX CLAW - Agent Orchestration       ') + chalk.bold.cyan('║'));
+  console.log(chalk.bold.cyan('║') + chalk.bold.white('  SCALIX CODE - Agent Orchestration       ') + chalk.bold.cyan('║'));
   console.log(chalk.bold.cyan('║') + chalk.bold.white('  Production-Ready Platform for Agents    ') + chalk.bold.cyan('║'));
   console.log(chalk.bold.cyan('╚════════════════════════════════════════════╝'));
   console.log();
@@ -114,7 +114,7 @@ export function printWelcome(): void {
  */
 export function printGoodbye(): void {
   console.log();
-  console.log(chalk.cyan('Thank you for using') + ' ' + chalk.bold.cyan('SCALIX CLAW') + chalk.cyan('! 🚀'));
+  console.log(chalk.cyan('Thank you for using') + ' ' + chalk.bold.cyan('SCALIX CODE') + chalk.cyan('! 🚀'));
   console.log();
 }
 
@@ -133,7 +133,7 @@ export const brandColors = {
  * Brand typography
  */
 export const brandTypography = {
-  name: 'SCALIX CLAW',
+  name: 'SCALIX CODE',
   tagline: 'Agent Orchestration Platform for Production',
   description: 'Production-ready, type-safe, observable multi-agent orchestration',
 };

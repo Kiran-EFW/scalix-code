@@ -1,5 +1,5 @@
 /**
- * Scalix CLAW API
+ * Scalix Code API
  *
  * REST API server for agent orchestration
  */

@@ -1,10 +1,19 @@
 /**
- * LLM Provider Stub
+ * LLM Provider Exports
  *
- * Placeholder for LLM integration (would use @ai-sdk/anthropic in production)
+ * Main entry point for LLM provider functionality
  */
 
 import type { LLMProvider } from './executor';
+export type { LLMProvider };
+
+// Export real implementations
+export {
+  OpenAICompatibleProvider,
+  createOpenAIProvider,
+  createOllamaProvider,
+  createLMStudioProvider,
+} from './llm-provider-openai';
 
 /**
  * Mock LLM provider for testing
@@ -34,19 +43,20 @@ export class MockLLMProvider implements LLMProvider {
 }
 
 /**
- * Real LLM provider factory (would use Anthropic SDK)
+ * Fallback to mock provider (for testing or when API unavailable)
  */
-export function createAnthropicProvider(): LLMProvider {
-  // TODO: Implement when anthropic SDK is available
+export function createMockProvider(): LLMProvider {
   return new MockLLMProvider();
 }
 
-export function createOpenAIProvider(): LLMProvider {
-  // TODO: Implement when openai SDK is available
-  return new MockLLMProvider();
-}
-
-export function createGoogleProvider(): LLMProvider {
-  // TODO: Implement when google SDK is available
+/**
+ * Default provider factory - uses OpenAI if API key available, otherwise mock
+ */
+export function createDefaultProvider(): LLMProvider {
+  const apiKey = process.env.OPENAI_API_KEY;
+  if (apiKey && apiKey.startsWith('sk-')) {
+    return createOpenAIProvider({ apiKey });
+  }
+  // Fall back to mock for testing
   return new MockLLMProvider();
 }

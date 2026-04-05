@@ -1,7 +1,7 @@
 {
   "name": "@scalix/sdk",
   "version": "0.1.0",
-  "description": "TypeScript SDK for Scalix CLAW",
+  "description": "TypeScript SDK for Scalix Code",
   "license": "MIT",
   "type": "module",
   "exports": {

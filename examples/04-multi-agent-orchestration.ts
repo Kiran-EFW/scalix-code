@@ -7,7 +7,7 @@
 import { createPlatform } from '@scalix/core';
 
 async function main() {
-  console.log('🚀 Scalix CLAW - Multi-Agent Orchestration\n');
+  console.log('🚀 Scalix Code - Multi-Agent Orchestration\n');
 
   // Create platform
   const platform = createPlatform({ debug: false });

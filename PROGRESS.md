@@ -1,4 +1,4 @@
-# Scalix CLAW: Development Progress
+# Scalix Code: Development Progress
 
 **Project Start**: April 4, 2026  
 **Current Date**: April 5, 2026  
@@ -27,7 +27,7 @@ Phase 5: Open Source Launch      📋 PLANNED
 42e0286 feat: implement Phase 3B terminal CLI with interactive REPL
 08a9fd6 feat: implement Phase 3 REST API with WebSocket support
 97cb919 feat: implement Phase 2 core modules (agent executor, orchestration, tools)
-eff5ea3 feat: initialize Scalix CLAW project foundation with world-class modularity
+eff5ea3 feat: initialize Scalix Code project foundation with world-class modularity
 ```
 
 ---
@@ -113,7 +113,7 @@ eff5ea3 feat: initialize Scalix CLAW project foundation with world-class modular
 - **Features**: Component discovery, plugin management
 
 ### Platform Module ✅
-- ✅ CLAWPlatform: Complete platform factory
+- ✅ Scalix CodePlatform: Complete platform factory
 - **Features**: Agent management, health checks, statistics, shutdown
 
 ### Examples ✅
@@ -533,4 +533,4 @@ NEXT: Authentication Layer (Phase 3C)
 **Scalability**: Designed for enterprise.  
 **Timeline**: 2 weeks to Phase 5 launch.
 
-🎯 **Scalix CLAW is ready for authentication & dashboard.** 🚀
+🎯 **Scalix Code is ready for authentication & dashboard.** 🚀

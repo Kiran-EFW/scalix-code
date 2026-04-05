@@ -21,13 +21,17 @@ import type {
  */
 export function createMockLLMProvider(overrides?: Partial<LLMProvider>): LLMProvider {
   return {
-    call: vi.fn(async () => ({
-      content: 'Mock LLM response',
-      toolCalls: [],
-      inputTokens: 100,
-      outputTokens: 50,
-      model: 'mock-model',
-    } as LLMResponse)),
+    call: vi.fn(async () => {
+      // Add a small delay to simulate real LLM behavior
+      await new Promise((resolve) => setTimeout(resolve, 50));
+      return {
+        content: 'Mock LLM response',
+        toolCalls: [],
+        inputTokens: 100,
+        outputTokens: 50,
+        model: 'mock-model',
+      } as LLMResponse;
+    }),
     ...overrides,
   };
 }
@@ -55,20 +59,18 @@ export function createMockLogger(overrides?: Partial<Logger>): Logger {
  */
 export function createMockTracer(overrides?: Partial<Tracer>): Tracer {
   return {
-    startSpan: vi.fn(function* () {
-      yield {
-        spanId: 'mock-span',
-        traceId: 'mock-trace',
-        name: 'mock',
-        status: 'success',
-        duration: 100,
-        parentId: undefined,
-        startTime: new Date(),
-        attributes: {},
-        events: [],
-        recordEvent: vi.fn(),
-      };
-    }()),
+    startSpan: vi.fn(async () => ({
+      spanId: 'mock-span',
+      traceId: 'mock-trace',
+      name: 'mock',
+      status: 'success',
+      duration: 100,
+      parentId: undefined,
+      startTime: new Date(),
+      attributes: {},
+      events: [],
+      recordEvent: vi.fn(),
+    })),
     getTraces: vi.fn(() => []),
     getTracesByTraceId: vi.fn(() => []),
     exportJSON: vi.fn(() => ({
@@ -184,18 +186,24 @@ export function createMockExecutionResult(overrides?: Partial<ExecutionResult>):
  * Create a mock agent
  */
 export function createMockAgent(overrides?: Partial<Agent>): Agent {
+  const agentId = overrides?.id || 'mock-agent';
+  const agentName = overrides?.name || 'Mock Agent';
+
   return {
-    id: 'mock-agent',
-    name: 'Mock Agent',
+    id: agentId,
+    name: agentName,
     config: {
-      id: 'mock-agent',
-      name: 'Mock Agent',
+      id: agentId,
+      name: agentName,
       model: {
         provider: 'anthropic',
         model: 'claude-3-sonnet-20240229',
       },
+      tools: [],
+      systemPrompt: 'You are a helpful assistant.',
+      ...overrides?.config,
     },
-    execute: vi.fn(async (input: string) => createMockExecutionResult()),
+    execute: vi.fn(async (input: string) => createMockExecutionResult({ agentId })),
     getMemory: vi.fn(async () => null),
     saveMemory: vi.fn(async () => {}),
     setState: vi.fn(),

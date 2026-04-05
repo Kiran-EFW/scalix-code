@@ -7,7 +7,7 @@
 import { createPlatform } from '../core/src/platform';
 
 async function main() {
-  console.log('🚀 Scalix CLAW - Hello World Example\n');
+  console.log('🚀 Scalix Code - Hello World Example\n');
 
   // Create platform instance
   const platform = createPlatform({ debug: true });
